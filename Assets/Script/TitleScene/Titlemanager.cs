@@ -1,23 +1,69 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class TitleManager : MonoBehaviour
 {
-    [Header("Scene Settings")]
-    public string gameSceneName = "BaseCamp";
+    [Header("씬 전환 딜레이")]
+    public float transitionDelay = 0.6f;
+
+    private bool isTransitioning = false;
 
     public void StartGame()
     {
-        Debug.Log("게임 시작!");
+        if (!isTransitioning)
+        {
+            StartCoroutine(StartGameWithDelay());
+        }
+    }
 
-        // 이전 스폰 정보 삭제
+    IEnumerator StartGameWithDelay()
+    {
+        isTransitioning = true;
+
+        yield return new WaitForSeconds(transitionDelay);
+
         PlayerPrefs.DeleteKey("LastSpawnPoint");
 
-        SceneManager.LoadScene(gameSceneName);
+        if (LoadingManager.Instance != null)
+        {
+            LoadingManager.Instance.LoadScene("BaseCamp", "DefaultSpawn"); // spawnPointName 빈 문자열
+        }
+        else
+        {
+            SceneManager.LoadScene("BaseCamp");
+        }
+    }
+
+    public void LoadOptions()
+    {
+        if (!isTransitioning)
+        {
+            StartCoroutine(LoadOptionsWithDelay());
+        }
+    }
+
+    IEnumerator LoadOptionsWithDelay()
+    {
+        isTransitioning = true;
+        yield return new WaitForSeconds(transitionDelay);
+
+        Debug.Log("옵션 열기");
     }
 
     public void QuitGame()
     {
+        if (!isTransitioning)
+        {
+            StartCoroutine(QuitGameWithDelay());
+        }
+    }
+
+    IEnumerator QuitGameWithDelay()
+    {
+        isTransitioning = true;
+        yield return new WaitForSeconds(transitionDelay);
+
         Application.Quit();
     }
 }
