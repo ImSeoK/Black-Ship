@@ -3,7 +3,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement - HOT RELOAD 가능")]
-    public float moveSpeed = 5f;
+    public float moveSpeed = 4f;
+    public float runSpeed = 8f; // 추가!
 
     [Header("Dodge Roll - HOT RELOAD 가능")]
     public float rollSpeed = 12f;
@@ -31,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0) return;
+
         // 구르기 중이 아닐 때만 입력 받기
         if (!isRolling)
         {
@@ -43,6 +46,9 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.DownArrow)) moveInput.y = -1;
             moveInput.Normalize();
         }
+
+        // Shift 확인
+        bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
         // 구르기 쿨다운 감소
         if (rollCooldownTimer > 0)
@@ -66,18 +72,23 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        // 애니메이션
         if (animator != null)
         {
             bool isMoving = moveInput.magnitude > 0 && !isRolling;
             animator.SetBool("isMoving", isMoving);
             animator.SetBool("IsRolling", isRolling);
 
+            // 속도 파라미터 (Walk/Run 구분)
+            float currentSpeed = isRunning ? runSpeed : moveSpeed;
+            animator.SetFloat("speed", isMoving ? currentSpeed : 0);
+
             // 좌우 반전
-            if (moveInput.x < 0) // 왼쪽
+            if (moveInput.x < 0)
             {
                 transform.localScale = new Vector3(-1, 1, 1);
             }
-            else if (moveInput.x > 0) // 오른쪽
+            else if (moveInput.x > 0)
             {
                 transform.localScale = new Vector3(1, 1, 1);
             }
@@ -93,8 +104,11 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // 일반 이동
-            rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
+            // Shift에 따라 속도 변경
+            bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            float currentSpeed = isRunning ? runSpeed : moveSpeed;
+
+            rb.MovePosition(rb.position + moveInput * currentSpeed * Time.fixedDeltaTime);
         }
     }
 

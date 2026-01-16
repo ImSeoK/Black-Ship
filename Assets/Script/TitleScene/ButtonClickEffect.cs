@@ -9,16 +9,20 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
     public float shakeDuration = 0.1f;
     public float shakeAmount = 5f;
     public float scalePunch = 0.9f;
-
+    
     [Header("깨지는 이펙트")]
     public Sprite crackSprite;
     public float crackDuration = 0.3f;
-
+    
+    [Header("사운드")]
+    public AudioClip clickSound; // 추가!
+    
     private Vector3 originalScale;
     private Vector3 originalPosition;
     private RectTransform rectTransform;
     private Coroutine effectCoroutine;
     private GameObject currentCrackObj;
+    private AudioSource audioSource; // 추가!
 
     void Start()
     {
@@ -29,13 +33,17 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // 이전 코루틴 중단
+        // SoundManager로 재생
+        if (clickSound != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySound(clickSound);
+        }
+
         if (effectCoroutine != null)
         {
             StopCoroutine(effectCoroutine);
         }
 
-        // 이전 이펙트 즉시 삭제
         if (currentCrackObj != null)
         {
             Destroy(currentCrackObj);
