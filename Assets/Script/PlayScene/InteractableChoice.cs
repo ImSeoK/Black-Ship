@@ -35,7 +35,6 @@ public class InteractableChoice : InteractableObject
 
     void OnYes()
     {
-        isActivated = true;
 
         if (animator != null)
         {

@@ -12,11 +12,28 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
+        // 상호작용 불가 조건
+        if (Time.timeScale == 0) return;
+
+        if (DialogueUI.Instance != null && DialogueUI.Instance.IsDialogueActive())
+        {
+            return;
+        }
+
+        if (ChoiceUI.Instance != null && ChoiceUI.Instance.IsActive())
+        {
+            return;
+        }
+
+        // 이제 상호작용 가능
         DetectInteractable();
 
-        if (Input.GetKeyDown(interactKey) && currentInteractable != null)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            currentInteractable.Interact();
+            if (currentInteractable != null)
+            {
+                currentInteractable.Interact();
+            }
         }
     }
 

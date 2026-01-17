@@ -62,14 +62,21 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
-        // ChoiceUI 열려있으면 무시
-        if (ChoiceUI.Instance != null && ChoiceUI.Instance.IsActive())
-        {
-            return;
-        }
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // DialogueUI 열려있으면 무시
+            if (DialogueUI.Instance != null && DialogueUI.Instance.IsDialogueActive())
+            {
+                return;
+            }
+
+            // ChoiceUI 열려있으면 무시
+            if (ChoiceUI.Instance != null && ChoiceUI.Instance.IsActive())
+            {
+                return;
+            }
+
+            // 둘 다 없으면 일시정지 토글
             if (isPaused)
             {
                 Resume();

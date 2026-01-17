@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
@@ -7,24 +6,20 @@ public class DialogueUI : MonoBehaviour
 {
     public static DialogueUI Instance;
 
-    [Header("UI 요소")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI speakerText;
-
-    [Header("타이핑 효과")]
     public float typingSpeed = 0.05f;
 
-    private string[] currentDialogues;
-    private int currentIndex = 0;
-    private bool isTyping = false;
-    private Coroutine typingCoroutine;
+    private string[] dialogues;
+    private int index = 0;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject); // ← 이것만 추가
         }
         else
         {
@@ -37,85 +32,66 @@ public class DialogueUI : MonoBehaviour
         dialoguePanel.SetActive(false);
     }
 
-    void Update()
+    public void ShowDialogue(string speaker, string[] texts)
     {
-        if (dialoguePanel.activeSelf)
-        {
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-            {
-                if (isTyping)
-                {
-                    // 타이핑 중이면 즉시 완성
-                    CompleteText();
-                }
-                else
-                {
-                    // 다음 대사
-                    ShowNextDialogue();
-                }
-            }
-        }
-    }
+        // 코루틴 중단
+        StopAllCoroutines();
 
-    public void ShowDialogue(string speaker, string[] dialogues)
-    {
+        // 배열 새로 복사
+        dialogues = new string[texts.Length];
+        for (int i = 0; i < texts.Length; i++)
+        {
+            dialogues[i] = texts[i];
+        }
+
+        index = 0;
         speakerText.text = speaker;
-        currentDialogues = dialogues;
-        currentIndex = 0;
-
         dialoguePanel.SetActive(true);
-        Time.timeScale = 0f; // 일시정지
+        Time.timeScale = 0f;
 
-        ShowNextDialogue();
+        StartCoroutine(Type());
     }
 
-    void ShowNextDialogue()
+    IEnumerator Type()
     {
-        if (currentIndex < currentDialogues.Length)
-        {
-            if (typingCoroutine != null)
-            {
-                StopCoroutine(typingCoroutine);
-            }
-
-            typingCoroutine = StartCoroutine(TypeText(currentDialogues[currentIndex]));
-            currentIndex++;
-        }
-        else
-        {
-            // 대화 종료
-            CloseDialogue();
-        }
-    }
-
-    IEnumerator TypeText(string text)
-    {
-        isTyping = true;
+        string fullText = dialogues[index];
         dialogueText.text = "";
 
-        foreach (char c in text)
+        for (int i = 0; i < fullText.Length; i++)
         {
-            dialogueText.text += c;
-            yield return new WaitForSecondsRealtime(typingSpeed);
-        }
+            dialogueText.text += fullText[i];
 
-        isTyping = false;
+            float timer = 0f;
+            while (timer < typingSpeed)
+            {
+                timer += Time.unscaledDeltaTime;
+                yield return null;
+            }
+        }
     }
 
-    void CompleteText()
+    void Update()
     {
-        if (typingCoroutine != null)
-        {
-            StopCoroutine(typingCoroutine);
-        }
+        if (!dialoguePanel.activeSelf) return;
 
-        dialogueText.text = currentDialogues[currentIndex - 1];
-        isTyping = false;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            index++;
+            if (index < dialogues.Length)
+            {
+                StopAllCoroutines();
+                StartCoroutine(Type());
+            }
+            else
+            {
+                dialoguePanel.SetActive(false);
+                Time.timeScale = 1f;
+            }
+        }
     }
 
-    void CloseDialogue()
+    public bool IsDialogueActive()
     {
-        dialoguePanel.SetActive(false);
-        Time.timeScale = 1f;
+        return dialoguePanel.activeSelf;
     }
 }
