@@ -14,11 +14,13 @@ public class InteractableChoice : InteractableObject
 
     private Animator animator;
     private bool isActivated = false;
+    private DialogueTrigger dialogueTrigger; // 추가!
 
     protected override void Start()
     {
         base.Start();
         animator = GetComponent<Animator>();
+        dialogueTrigger = GetComponent<DialogueTrigger>(); // 추가!
     }
 
     public override void Interact()
@@ -27,7 +29,6 @@ public class InteractableChoice : InteractableObject
 
         if (ChoiceUI.Instance != null)
         {
-            // transform 추가, OnNo도 추가!
             ChoiceUI.Instance.ShowChoice(transform, yesButtonText, noButtonText, OnYes, OnNo);
         }
     }
@@ -44,6 +45,12 @@ public class InteractableChoice : InteractableObject
         if (targetCollider != null)
         {
             targetCollider.enabled = false;
+        }
+
+        // DialogueTrigger 호출 추가!
+        if (dialogueTrigger != null)
+        {
+            dialogueTrigger.TriggerDialogue();
         }
     }
 
