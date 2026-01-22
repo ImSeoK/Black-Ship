@@ -7,7 +7,7 @@ public class StatsManager : MonoBehaviour
 
     [Header("UI Reference")]
     public GameObject statsPanel;
-    public KeyCode statsKey = KeyCode.S;
+    public KeyCode statsKey = KeyCode.I;
 
     [Header("Player Stats - HOT RELOAD °¡´É")]
     public float playerHP = 100f;

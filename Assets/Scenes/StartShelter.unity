@@ -389,7 +389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSceneName: Forest
   spawnPointName: DoorToHatch
-  interactKey: 102
+  interactKey: 101
   interactionRange: 1.5
   playerLayer:
     serializedVersion: 2
@@ -10048,7 +10048,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSceneName: BaseCamp
   spawnPointName: DoorToStartShelter
-  interactKey: 102
+  interactKey: 101
   interactionRange: 1.5
   playerLayer:
     serializedVersion: 2

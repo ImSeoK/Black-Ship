@@ -50,7 +50,7 @@ public class ChoiceUI : MonoBehaviour
         }
 
         // 좌우 화살표 입력 (경계 체크)
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.A))
         {
             if (selectedIndex > 0) // Yes(0)에서 왼쪽 막기
             {
@@ -58,7 +58,7 @@ public class ChoiceUI : MonoBehaviour
                 UpdateButtonHighlight();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.D))
         {
             if (selectedIndex < 1) // No(1)에서 오른쪽 막기
             {
@@ -68,7 +68,7 @@ public class ChoiceUI : MonoBehaviour
         }
 
         // Enter/Space로 선택
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (selectedIndex == 0)
                 OnYesClick();

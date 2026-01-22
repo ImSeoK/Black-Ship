@@ -14,6 +14,8 @@ public class DialogueUI : MonoBehaviour
     private string[] dialogues;
     private int index = 0;
 
+    private bool canAcceptInput = false;
+
     void Awake()
     {
         if (Instance == null)
@@ -34,21 +36,14 @@ public class DialogueUI : MonoBehaviour
 
     public void ShowDialogue(string speaker, string[] texts)
     {
-        // 코루틴 중단
         StopAllCoroutines();
-
-        // 배열 새로 복사
-        dialogues = new string[texts.Length];
-        for (int i = 0; i < texts.Length; i++)
-        {
-            dialogues[i] = texts[i];
-        }
-
+        dialogues = (string[])texts.Clone();
         index = 0;
         speakerText.text = speaker;
         dialoguePanel.SetActive(true);
         Time.timeScale = 0f;
 
+        canAcceptInput = false; // 입력 막기
         StartCoroutine(Type());
     }
 
@@ -68,14 +63,17 @@ public class DialogueUI : MonoBehaviour
                 yield return null;
             }
         }
+
+        canAcceptInput = true; // 타이핑 끝나면 입력 허용
     }
 
     void Update()
     {
         if (!dialoguePanel.activeSelf) return;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (canAcceptInput && Input.GetKeyDown(KeyCode.Space))
         {
+            canAcceptInput = false; // 중복 방지
             index++;
             if (index < dialogues.Length)
             {
@@ -92,6 +90,6 @@ public class DialogueUI : MonoBehaviour
 
     public bool IsDialogueActive()
     {
-        return dialoguePanel.activeSelf;
+        return dialoguePanel != null && dialoguePanel.activeSelf;
     }
 }

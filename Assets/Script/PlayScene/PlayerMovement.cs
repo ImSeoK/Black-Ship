@@ -40,10 +40,10 @@ public class PlayerMovement : MonoBehaviour
             // 방향키만 사용
             moveInput.x = 0;
             moveInput.y = 0;
-            if (Input.GetKey(KeyCode.LeftArrow)) moveInput.x = -1;
-            if (Input.GetKey(KeyCode.RightArrow)) moveInput.x = 1;
-            if (Input.GetKey(KeyCode.UpArrow)) moveInput.y = 1;
-            if (Input.GetKey(KeyCode.DownArrow)) moveInput.y = -1;
+            if (Input.GetKey(KeyCode.A)) moveInput.x = -1;
+            if (Input.GetKey(KeyCode.D)) moveInput.x = 1;
+            if (Input.GetKey(KeyCode.W)) moveInput.y = 1;
+            if (Input.GetKey(KeyCode.S)) moveInput.y = -1;
             moveInput.Normalize();
         }
 
