@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3642885129704114503}
   - component: {fileID: 2220006770597066980}
   - component: {fileID: 1418090419379304890}
-  - component: {fileID: 884770107750439784}
   - component: {fileID: 8985944664217025045}
   - component: {fileID: 1563306927187456550}
   - component: {fileID: 2573252757319486138}
@@ -94,7 +93,7 @@ SpriteRenderer:
   m_Size: {x: 1.375, y: 3.1666667}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!50 &352253035036393560
@@ -201,24 +200,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  runSpeed: 8
   rollSpeed: 12
   rollDuration: 0.3
   rollCooldown: 1
   rollKey: 32
---- !u!114 &884770107750439784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4540136445598608197}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e73f171e8e6cc0429c9de2e83f9635a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  highlightColor: {r: 0.5, g: 0.8, b: 1, a: 1}
-  outlineWidth: 0.15
 --- !u!114 &8985944664217025045
 MonoBehaviour:
   m_ObjectHideFlags: 0
