@@ -20,18 +20,18 @@ public class TitleManager : MonoBehaviour
     IEnumerator StartGameWithDelay()
     {
         isTransitioning = true;
-
         yield return new WaitForSeconds(transitionDelay);
 
         PlayerPrefs.DeleteKey("LastSpawnPoint");
 
         if (LoadingManager.Instance != null)
         {
-            LoadingManager.Instance.LoadScene("BaseCamp", "DefaultSpawn"); // spawnPointName 빈 문자열
+            // WeaponSelectScene으로 변경!
+            LoadingManager.Instance.LoadScene("WeaponSelectScene", "");
         }
         else
         {
-            SceneManager.LoadScene("BaseCamp");
+            SceneManager.LoadScene("WeaponSelectScene");
         }
     }
 

@@ -9,6 +9,7 @@ public class LoadingManager : MonoBehaviour
 
     [Header("Loading UI")]
     public GameObject loadingPanel;
+    public GameObject loadingUI;
     public Image fadeImage;
     public TMPro.TextMeshProUGUI loadingText;
     public float fadeDuration = 0.5f;
@@ -93,7 +94,7 @@ public class LoadingManager : MonoBehaviour
         isLoading = false;
     }
 
-    IEnumerator Fade(float startAlpha, float endAlpha)
+    public IEnumerator Fade(float startAlpha, float endAlpha)
     {
         if (fadeImage == null) yield break;
 
