@@ -1,10 +1,15 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InteractableChoice : InteractableObject
 {
     [Header("선택 메시지")]
     public string yesButtonText;
     public string noButtonText;
+
+    [Header("이벤트")] // 추가!
+    public UnityEvent onYesSelected;
+    public UnityEvent onNoSelected;
 
     [Header("애니메이션")]
     public string triggerName = "Activate";

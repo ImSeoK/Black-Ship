@@ -2,10 +2,8 @@ using UnityEngine;
 
 public class WeaponInitializer : MonoBehaviour
 {
-    [Header("애니메이터 컨트롤러")]
-    public RuntimeAnimatorController spearAnimator;
-    public RuntimeAnimatorController swordAnimator;
-    public RuntimeAnimatorController bowAnimator;
+    [Header("무기 데이터베이스")]
+    public WeaponData[] weaponDatabase;
 
     private Animator animator;
 
@@ -23,37 +21,23 @@ public class WeaponInitializer : MonoBehaviour
             return;
         }
 
-        // Animator 교체
-        ChangeAnimator(weaponType);
+        // 무기 데이터 찾기
+        WeaponData weaponData = System.Array.Find(weaponDatabase, w => w.weaponType == weaponType);
 
-        // WeaponManager에 설정
-        WeaponManager weaponManager = GetComponent<WeaponManager>();
-        if (weaponManager != null)
+        if (weaponData != null)
         {
-            weaponManager.EquipWeapon(weaponType);
-        }
-    }
+            // Animator 교체
+            if (weaponData.animatorController != null)
+            {
+                animator.runtimeAnimatorController = weaponData.animatorController;
+            }
 
-    void ChangeAnimator(WeaponType type)
-    {
-        RuntimeAnimatorController controller = null;
-
-        switch (type)
-        {
-            case WeaponType.Spear:
-                controller = spearAnimator;
-                break;
-            case WeaponType.Sword:
-                controller = swordAnimator;
-                break;
-            case WeaponType.Bow:
-                controller = bowAnimator;
-                break;
-        }
-
-        if (controller != null && animator != null)
-        {
-            animator.runtimeAnimatorController = controller;
+            // WeaponManager에 설정
+            WeaponManager weaponManager = GetComponent<WeaponManager>();
+            if (weaponManager != null)
+            {
+                weaponManager.EquipWeapon(weaponType);
+            }
         }
     }
 }

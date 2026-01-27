@@ -833,7 +833,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8d9e4e9768bf240bbbda4dd25fe84b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursorDefault: {fileID: 2800000, guid: 435d6ba160d51ca47b2c7009a5dd6380, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 435d6ba160d51ca47b2c7009a5dd6380, type: 3}
+  spearCursor: {fileID: 2800000, guid: d07511fc3ff777a47a9776accb41989a, type: 3}
+  swordCursor: {fileID: 0}
+  bowCursor: {fileID: 0}
   hotspot: {x: 16, y: 16}
 --- !u!4 &546254758
 Transform:

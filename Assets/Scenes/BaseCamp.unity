@@ -2714,7 +2714,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4683e7588ae203a4c8a5d160842da63b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCooldown: 0.5
 --- !u!1 &874160056
 GameObject:
   m_ObjectHideFlags: 0
@@ -3570,7 +3569,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1387176136}
   - component: {fileID: 1387176135}
-  - component: {fileID: 1387176133}
+  - component: {fileID: 1387176138}
   - component: {fileID: 1387176137}
   m_Layer: 8
   m_Name: AttackBox
@@ -3579,20 +3578,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1387176133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387176132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43f0e89130a99314883f0afbd1ad1d31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineColor: {r: 1, g: 0.5, b: 0, a: 1}
-  outlineWidth: 0.05
 --- !u!212 &1387176135
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3709,6 +3694,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.74387, y: 1.216752}
   m_EdgeRadius: 0
+--- !u!114 &1387176138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387176132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f391351518d3da4b9fd8bc6842b53da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineColor: {r: 1, g: 0.5, b: 0, a: 1}
+  outlineWidth: 0.05
+  yesButtonText: "\uC7A5\uCC29\uD55C\uB2E4"
+  noButtonText: "\uD544\uC694 \uC5C6\uB2E4"
+  triggerName: Activate
+  targetCollider: {fileID: 0}
 --- !u!1 &1498640534
 GameObject:
   m_ObjectHideFlags: 0

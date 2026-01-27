@@ -12,11 +12,13 @@ GameObject:
   - component: {fileID: 6201603094216041260}
   - component: {fileID: 352253035036393560}
   - component: {fileID: 3642885129704114503}
+  - component: {fileID: 7944338043358903160}
+  - component: {fileID: 2908774580398695916}
+  - component: {fileID: -5396231037523116259}
   - component: {fileID: 2220006770597066980}
   - component: {fileID: 1418090419379304890}
   - component: {fileID: 8985944664217025045}
   - component: {fileID: 1563306927187456550}
-  - component: {fileID: 2573252757319486138}
   - component: {fileID: 6891618233403490517}
   - component: {fileID: 722466715364027142}
   m_Layer: 3
@@ -169,6 +171,48 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.6987976, y: 0.44940436}
   m_EdgeRadius: 0
+--- !u!114 &7944338043358903160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4540136445598608197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f903542c6e2577142b7a2f70ee3b3d7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWeapon: 0
+  currentWeaponData: {fileID: 0}
+  allWeapons:
+  - {fileID: 11400000, guid: a565b8fc3b2d22d4ab1887cf5411432e, type: 2}
+--- !u!114 &2908774580398695916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4540136445598608197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4dfe60b46db56d43a48e40696f16a5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponDatabase:
+  - {fileID: 11400000, guid: a565b8fc3b2d22d4ab1887cf5411432e, type: 2}
+--- !u!114 &-5396231037523116259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4540136445598608197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4683e7588ae203a4c8a5d160842da63b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2220006770597066980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,23 +277,6 @@ MonoBehaviour:
   eKeyUI: {fileID: 0}
   fKeyUI: {fileID: 0}
   offsetY: 1
---- !u!114 &2573252757319486138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4540136445598608197}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 335afb60ca10d3c4a97f0649e79fd4b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sortingOrderBase: 5000
-  offset: 0
-  isStatic: 0
-  fadeAlpha: 0.5
-  checkRadius: 1.5
 --- !u!114 &6891618233403490517
 MonoBehaviour:
   m_ObjectHideFlags: 0

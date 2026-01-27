@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9aa281edc72da74a8055bfc6927b5a2, type: 3}
+  m_Name: SpearData
+  m_EditorClassIdentifier: 
+  weaponType: 1
+  weaponName: "\uCC3D"
+  description: "\uB625\uC744 \uBC1C\uC0AC\uD55C"
+  icon: {fileID: 6570684119181482315, guid: 8d88f87f9a4edd647ab0c7dd80aa0b86, type: 3}
+  damage: 0
+  attackCooldown: 0
+  range: 0
+  knockback: 0
+  animatorController: {fileID: 0}
+  hasSpecialAbility: 0
+  specialAbilityDescription: 
