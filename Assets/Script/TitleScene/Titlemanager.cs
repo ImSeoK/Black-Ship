@@ -22,11 +22,23 @@ public class TitleManager : MonoBehaviour
         isTransitioning = true;
         yield return new WaitForSeconds(transitionDelay);
 
-        PlayerPrefs.DeleteKey("LastSpawnPoint");
+        // ===== 새 게임 시작 시 모든 게임 데이터 초기화 =====
+        PlayerPrefs.DeleteAll(); // 모든 저장 데이터 삭제
+        PlayerPrefs.Save();
+
+        // StatsManager도 초기화
+        if (StatsManager.Instance != null)
+        {
+            StatsManager.Instance.forestCutscenePlayed = false;
+            StatsManager.Instance.babyPickedUp = false;
+            StatsManager.Instance.carryingBaby = false;
+            StatsManager.Instance.babySceneName = "";
+            StatsManager.Instance.babyPosition = Vector3.zero;
+        }
+        // ========================================
 
         if (LoadingManager.Instance != null)
         {
-            // WeaponSelectScene으로 변경!
             LoadingManager.Instance.LoadScene("WeaponSelectScene", "");
         }
         else

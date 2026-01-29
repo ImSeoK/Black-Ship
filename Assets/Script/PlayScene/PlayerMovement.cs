@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement - HOT RELOAD °¡´É")]
+    [Header("Movement - HOT RELOAD ï¿½ï¿½ï¿½ï¿½")]
     public float moveSpeed = 4f;
-    public float runSpeed = 8f; // Ãß°¡!
+    public float runSpeed = 8f; // ï¿½ß°ï¿½!
 
-    [Header("Dodge Roll - HOT RELOAD °¡´É")]
+    [Header("Dodge Roll - HOT RELOAD ï¿½ï¿½ï¿½ï¿½")]
     public float rollSpeed = 12f;
     public float rollDuration = 0.3f;
     public float rollCooldown = 1f;
@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Animator animator;
 
-    // ±¸¸£±â »óÅÂ º¯¼ö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private bool isRolling = false;
     private float rollTimer = 0f;
     private float rollCooldownTimer = 0f;
@@ -34,10 +34,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.timeScale == 0) return;
 
-        // ±¸¸£±â ÁßÀÌ ¾Æ´Ò ¶§¸¸ ÀÔ·Â ¹Þ±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½Þ±ï¿½
         if (!isRolling)
         {
-            // ¹æÇâÅ°¸¸ »ç¿ë
             moveInput.x = 0;
             moveInput.y = 0;
             if (Input.GetKey(KeyCode.A)) moveInput.x = -1;
@@ -47,22 +46,21 @@ public class PlayerMovement : MonoBehaviour
             moveInput.Normalize();
         }
 
-        // Shift È®ÀÎ
         bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        // ±¸¸£±â Äð´Ù¿î °¨¼Ò
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (rollCooldownTimer > 0)
         {
             rollCooldownTimer -= Time.deltaTime;
         }
 
-        // ±¸¸£±â ÀÔ·Â È®ÀÎ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ È®ï¿½ï¿½
         if (Input.GetKeyDown(rollKey) && !isRolling && rollCooldownTimer <= 0 && moveInput.magnitude > 0)
         {
             StartRoll();
         }
 
-        // ±¸¸£±â Å¸ÀÌ¸Ó Ã³¸®
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ Ã³ï¿½ï¿½
         if (isRolling)
         {
             rollTimer -= Time.deltaTime;
@@ -72,18 +70,29 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // ¾Ö´Ï¸ÞÀÌ¼Ç
+        // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½
         if (animator != null)
         {
             bool isMoving = moveInput.magnitude > 0 && !isRolling;
             animator.SetBool("isMoving", isMoving);
             animator.SetBool("IsRolling", isRolling);
 
-            // ¼Óµµ ÆÄ¶ó¹ÌÅÍ (Walk/Run ±¸ºÐ)
-            float currentSpeed = isRunning ? runSpeed : moveSpeed;
+            // ===== ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½: ï¿½Óµï¿½ ï¿½ï¿½ï¿½ =====
+            float baseSpeed = isRunning ? runSpeed : moveSpeed;
+
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+            float speedModifier = 1f;
+            if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
+            {
+                speedModifier = 0.7f; // 30% ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            }
+
+            float currentSpeed = baseSpeed * speedModifier;
+            // ===== ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ =====
+
             animator.SetFloat("speed", isMoving ? currentSpeed : 0);
 
-            // ÁÂ¿ì ¹ÝÀü
+            // ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (moveInput.x < 0)
             {
                 transform.localScale = new Vector3(-1, 1, 1);
@@ -95,24 +104,39 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+
+void FixedUpdate()
+{
+    if (Time.timeScale == 0) return;
+
+    if (isRolling)
     {
-        if (isRolling)
-        {
-            // ±¸¸£±â Áß¿¡´Â ±¸¸£±â ¹æÇâÀ¸·Î ºü¸£°Ô ÀÌµ¿
-            rb.MovePosition(rb.position + rollDirection * rollSpeed * Time.fixedDeltaTime);
-        }
-        else
-        {
-            // Shift¿¡ µû¶ó ¼Óµµ º¯°æ
-            bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            float currentSpeed = isRunning ? runSpeed : moveSpeed;
-
-            rb.MovePosition(rb.position + moveInput * currentSpeed * Time.fixedDeltaTime);
-        }
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ìµï¿½
+        rb.linearVelocity = rollDirection * rollSpeed;
     }
+    else
+    {
+        // ï¿½Ï¹ï¿½ ï¿½Ìµï¿½
+        bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-    private void StartRoll()
+        // ===== ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ =====
+        float baseSpeed = isRunning ? runSpeed : moveSpeed;
+
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+        float speedModifier = 1f;
+        if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
+        {
+            speedModifier = 0.7f;
+        }
+
+        float currentSpeed = baseSpeed * speedModifier;
+        // ===== ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ =====
+
+        rb.linearVelocity = moveInput * currentSpeed;
+    }
+}
+
+private void StartRoll()
     {
         isRolling = true;
         rollTimer = rollDuration;
