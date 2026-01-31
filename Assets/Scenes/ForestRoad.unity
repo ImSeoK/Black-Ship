@@ -2353,7 +2353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeline: {fileID: 1897285743}
   teleportPosition: {fileID: 1008651316}
-  playOnce: 0
+  playOnce: 1
   cutsceneID: ForestCutscene
 --- !u!61 &1060633099
 BoxCollider2D:
@@ -3328,6 +3328,59 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1573503683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1573503685}
+  - component: {fileID: 1573503684}
+  m_Layer: 0
+  m_Name: MonsterSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1573503684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573503683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d86e726f71459f4eb688d74f2a35baa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterTypes:
+  - monsterData: {fileID: 11400000, guid: 4776fa7f2a5aa734c9b616f9077d7076, type: 2}
+    poolSize: 5
+    spawnWeight: 0.6
+  maxMonsters: 10
+  spawnInterval: 5
+  spawnAreaMin: {x: -20, y: -20}
+  spawnAreaMax: {x: 20, y: 20}
+  minDistanceFromPlayer: 10
+--- !u!4 &1573503685
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573503683}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -9.664522, y: -1.2879386, z: -0.1687504}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1647222241 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8373456151180704352, guid: 07f40636ffe9a4941905185c3aba21b5, type: 3}
@@ -17127,3 +17180,4 @@ SceneRoots:
   - {fileID: 1060633100}
   - {fileID: 661298115}
   - {fileID: 904435097}
+  - {fileID: 1573503685}
