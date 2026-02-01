@@ -32,3 +32,5 @@ MonoBehaviour:
   isDashSkill: 0
   dashDistance: 5
   checkObstacles: 1
+  shiftsPosition: 1
+  positionShift: {x: 7, y: 0}

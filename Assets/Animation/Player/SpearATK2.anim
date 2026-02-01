@@ -32,23 +32,23 @@ AnimationClip:
       value: {fileID: 8213017087305124079, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
     - time: 0.16666667
       value: {fileID: 1965381261552750562, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
-    - time: 0.2
+    - time: 0.21666667
       value: {fileID: -8711787220162042363, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
-    - time: 0.23333333
-      value: {fileID: -8025869648670994826, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
     - time: 0.26666668
+      value: {fileID: -8025869648670994826, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
+    - time: 0.31666666
       value: {fileID: 8401551036993630996, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
-    - time: 0.3
-      value: {fileID: 3614879020993517876, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
-    - time: 0.33333334
-      value: {fileID: -2635712585599689952, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
     - time: 0.36666667
-      value: {fileID: -8128058836867306533, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
-    - time: 0.4
-      value: {fileID: 8305227908456938167, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
-    - time: 0.43333334
-      value: {fileID: 2932945476081986056, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
+      value: {fileID: 3614879020993517876, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
+    - time: 0.41666666
+      value: {fileID: -2635712585599689952, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
     - time: 0.46666667
+      value: {fileID: -8128058836867306533, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
+    - time: 0.51666665
+      value: {fileID: 8305227908456938167, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
+    - time: 0.56666666
+      value: {fileID: 2932945476081986056, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
+    - time: 0.6166667
       value: {fileID: 2932945476081986056, guid: 4f0edad444ae7124b831ff68ec225dc7, type: 3}
     attribute: m_Sprite
     path: 
@@ -92,7 +92,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.48333335
+    m_StopTime: 0.6333333
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -126,7 +126,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.43333334
+  - time: 0.6333333
     functionName: OnAttackEnd
     data: 
     objectReferenceParameter: {fileID: 0}

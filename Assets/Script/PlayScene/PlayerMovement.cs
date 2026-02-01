@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement - HOT RELOAD ����")]
+    [Header("Movement - HOT RELOAD")]
     public float moveSpeed = 4f;
-    public float runSpeed = 8f; // �߰�!
+    public float runSpeed = 8f;
 
-    [Header("Dodge Roll - HOT RELOAD ����")]
+    [Header("Dodge Roll - HOT RELOAD")]
     public float rollSpeed = 12f;
     public float rollDuration = 0.3f;
     public float rollCooldown = 1f;
@@ -18,7 +18,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Animator animator;
 
-    // ������ ���� ����
     private bool isRolling = false;
     private float rollTimer = 0f;
     private float rollCooldownTimer = 0f;
@@ -34,7 +33,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.timeScale == 0) return;
 
-        // ������ ���� �ƴ� ���� �Է� �ޱ�
+        // 공격 중이면 입력 무시 (추가!)
+        if (AttackController.Instance != null && AttackController.Instance.IsAttacking())
+        {
+            moveInput = Vector2.zero;
+            return;
+        }
+
+        // 구르기 중이 아닐 때만 입력 받기
         if (!isRolling)
         {
             moveInput.x = 0;
@@ -48,19 +54,19 @@ public class PlayerMovement : MonoBehaviour
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        // ������ ��ٿ� ����
+        // 구르기 쿨다운 감소
         if (rollCooldownTimer > 0)
         {
             rollCooldownTimer -= Time.deltaTime;
         }
 
-        // ������ �Է� Ȯ��
+        // 구르기 입력 확인
         if (Input.GetKeyDown(rollKey) && !isRolling && rollCooldownTimer <= 0 && moveInput.magnitude > 0)
         {
             StartRoll();
         }
 
-        // ������ Ÿ�̸� ó��
+        // 구르기 타이머 처리
         if (isRolling)
         {
             rollTimer -= Time.deltaTime;
@@ -70,29 +76,26 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // �ִϸ��̼�
+        // 애니메이션
         if (animator != null)
         {
             bool isMoving = moveInput.magnitude > 0 && !isRolling;
             animator.SetBool("isMoving", isMoving);
             animator.SetBool("IsRolling", isRolling);
 
-            // ===== ���� �κ�: �ӵ� ��� =====
             float baseSpeed = isRunning ? runSpeed : moveSpeed;
 
-            // ���� ��� ������ �ӵ� ����
             float speedModifier = 1f;
             if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
             {
-                speedModifier = 0.7f; // 30% ������
+                speedModifier = 0.7f;
             }
 
             float currentSpeed = baseSpeed * speedModifier;
-            // ===== ���� �� =====
 
             animator.SetFloat("speed", isMoving ? currentSpeed : 0);
 
-            // �¿� ����
+            // 좌우 반전
             if (moveInput.x < 0)
             {
                 transform.localScale = new Vector3(-1, 1, 1);
@@ -104,39 +107,40 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
-void FixedUpdate()
-{
-    if (Time.timeScale == 0) return;
-
-    if (isRolling)
+    void FixedUpdate()
     {
-        // ������ �� �̵�
-        rb.linearVelocity = rollDirection * rollSpeed;
-    }
-    else
-    {
-        // �Ϲ� �̵�
-        bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        if (Time.timeScale == 0) return;
 
-        // ===== ���� �κ� =====
-        float baseSpeed = isRunning ? runSpeed : moveSpeed;
-
-        // ���� ��� ������ �ӵ� ����
-        float speedModifier = 1f;
-        if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
+        // 공격 중이면 이동 중지 (추가!)
+        if (AttackController.Instance != null && AttackController.Instance.IsAttacking())
         {
-            speedModifier = 0.7f;
+            rb.linearVelocity = Vector2.zero;
+            return;
         }
 
-        float currentSpeed = baseSpeed * speedModifier;
-        // ===== ���� �� =====
+        if (isRolling)
+        {
+            rb.linearVelocity = rollDirection * rollSpeed;
+        }
+        else
+        {
+            bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        rb.linearVelocity = moveInput * currentSpeed;
+            float baseSpeed = isRunning ? runSpeed : moveSpeed;
+
+            float speedModifier = 1f;
+            if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
+            {
+                speedModifier = 0.7f;
+            }
+
+            float currentSpeed = baseSpeed * speedModifier;
+
+            rb.linearVelocity = moveInput * currentSpeed;
+        }
     }
-}
 
-private void StartRoll()
+    private void StartRoll()
     {
         isRolling = true;
         rollTimer = rollDuration;

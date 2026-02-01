@@ -34,6 +34,10 @@ public class AttackData : ScriptableObject
     public bool isDashSkill = false;
     public float dashDistance = 5f;
     public bool checkObstacles = true;
+
+    [Header("Position Shift (Non-Dash Skills)")]
+    public bool shiftsPosition = false;
+    public Vector2 positionShift = Vector2.zero;
 }
 
 public enum TimingMode

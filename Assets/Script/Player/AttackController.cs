@@ -19,6 +19,8 @@ public class AttackController : MonoBehaviour
     public Transform hitboxParent;
     public Transform effectParent;
 
+    private CameraFollow cameraFollow;
+
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
@@ -27,6 +29,7 @@ public class AttackController : MonoBehaviour
     private Dictionary<AttackData, float> lastAttackTimes = new Dictionary<AttackData, float>();
 
     private AttackData currentAttack;
+    private Vector2 pendingPositionShift = Vector2.zero;
 
     void Awake()
     {
@@ -40,6 +43,11 @@ public class AttackController : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        FindCameraFollow();
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -48,6 +56,8 @@ public class AttackController : MonoBehaviour
 
         if (hitboxParent == null) hitboxParent = transform;
         if (effectParent == null) effectParent = transform;
+
+        FindCameraFollow();
 
         LoadWeaponFromManager();
     }
@@ -91,6 +101,20 @@ public class AttackController : MonoBehaviour
         Debug.Log("Attack patterns loaded: " + attackSet.weaponType + " (" + attacks.Count + " attacks)");
     }
 
+    void FindCameraFollow()
+    {
+        cameraFollow = Object.FindAnyObjectByType<CameraFollow>();
+
+        if (cameraFollow == null)
+        {
+            Debug.LogWarning("CameraFollow not found! Camera won't move during skills.");
+        }
+        else
+        {
+            Debug.Log("CameraFollow found on: " + cameraFollow.gameObject.name);
+        }
+    }
+
     bool HasAnimationTrigger(string triggerName)
     {
         if (animator == null) return false;
@@ -108,6 +132,11 @@ public class AttackController : MonoBehaviour
     public void ReloadWeapon()
     {
         LoadWeaponFromManager();
+    }
+
+    public bool IsAttacking()
+    {
+        return isAttacking;
     }
 
     void Update()
@@ -175,6 +204,11 @@ public class AttackController : MonoBehaviour
         lastAttackTimes[attackData] = Time.time;
         currentAttack = attackData;
 
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
+
         Debug.Log("[" + attackData.attackName + "] Execute!");
 
         animator.SetTrigger(attackData.animationTrigger);
@@ -195,7 +229,25 @@ public class AttackController : MonoBehaviour
                 StartCoroutine(SpawnHitboxDelayed(attackData, attackData.hitboxActiveTime));
             }
 
-            yield return new WaitForSeconds(attackData.animationDuration);
+            // shiftsPosition이면 카메라 이동, 아니면 제자리
+            if (attackData.shiftsPosition)
+            {
+                yield return StartCoroutine(MoveCameraWithSkill(attackData));
+            }
+            else
+            {
+                // 제자리 공격
+                float elapsed = 0f;
+                while (elapsed < attackData.animationDuration)
+                {
+                    if (rb != null)
+                    {
+                        rb.linearVelocity = Vector2.zero;
+                    }
+                    elapsed += Time.deltaTime;
+                    yield return null;
+                }
+            }
         }
 
         isAttacking = false;
@@ -204,7 +256,7 @@ public class AttackController : MonoBehaviour
 
     IEnumerator ExecuteDash(AttackData attackData)
     {
-        float direction = spriteRenderer.flipX ? -1f : 1f;
+        float direction = transform.localScale.x < 0 ? -1f : 1f;
         Vector2 dashVector = new Vector2(attackData.dashDistance * direction, 0);
 
         Vector2 startPos = transform.position;
@@ -223,7 +275,6 @@ public class AttackController : MonoBehaviour
             {
                 float safeDistance = Mathf.Max(0, hit.distance - 0.5f);
                 endPos = startPos + dashVector.normalized * safeDistance;
-                Debug.Log("Obstacle detected! Distance adjusted: " + attackData.dashDistance + " -> " + safeDistance);
             }
         }
 
@@ -239,11 +290,64 @@ public class AttackController : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
+
             transform.position = Vector2.Lerp(startPos, endPos, t);
+
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+
             yield return null;
         }
 
         transform.position = endPos;
+    }
+
+    IEnumerator MoveCameraWithSkill(AttackData attackData)
+    {
+        float direction = transform.localScale.x < 0 ? -1f : 1f;
+
+        Vector2 cameraShift = new Vector2(
+            attackData.positionShift.x * direction,
+            attackData.positionShift.y
+        );
+
+        // 이동량 저장 (OnAttackEnd에서 사용)
+        pendingPositionShift = cameraShift;
+
+        float duration = attackData.animationDuration;
+        float elapsed = 0f;
+
+        if (cameraFollow == null)
+        {
+            FindCameraFollow();
+        }
+
+        if (cameraFollow == null)
+        {
+            Debug.LogError("CameraFollow not found in scene!");
+            yield break;
+        }
+
+        cameraFollow.ResetTempOffset();
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            Vector3 currentOffset = Vector2.Lerp(Vector2.zero, cameraShift, t);
+
+            cameraFollow.SetTempOffset(currentOffset);
+
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+
+            yield return null;
+        }
     }
 
     void CreatePathHitbox(Vector2 startPos, Vector2 endPos, float duration)
@@ -267,28 +371,45 @@ public class AttackController : MonoBehaviour
         float finalDamage = WeaponManager.Instance.CalculateFinalDamage(currentAttack.damage);
         hitbox.Initialize(finalDamage, currentAttack.attackName);
 
-        Debug.Log("Path hitbox created: " + startPos + " -> " + endPos);
-
         Destroy(hitboxObj, duration);
     }
 
     public void OnAttackHitboxSpawn()
     {
         if (currentAttack == null) return;
-        Debug.Log("[Animation Event] Hitbox spawned!");
         SpawnHitboxNow(currentAttack);
     }
 
     public void OnAttackEffectSpawn()
     {
         if (currentAttack == null) return;
-        Debug.Log("[Animation Event] Effect spawned!");
         SpawnEffectNow(currentAttack);
     }
 
     public void OnAttackEnd()
     {
-        Debug.Log("[Animation Event] Attack ended!");
+        Debug.Log("=== OnAttackEnd START ===");
+        Debug.Log("pendingPositionShift: " + pendingPositionShift);
+        Debug.Log("Player pos BEFORE: " + transform.position);
+
+        if (pendingPositionShift.magnitude > 0.01f)
+        {
+            // 카메라 오프셋 먼저 리셋
+            if (cameraFollow != null)
+            {
+                Debug.Log("Resetting camera offset");
+                cameraFollow.ResetTempOffset();
+            }
+
+            // Transform 이동
+            transform.position = (Vector2)transform.position + pendingPositionShift;
+            Debug.Log("Player pos AFTER: " + transform.position);
+
+            pendingPositionShift = Vector2.zero;
+        }
+
+        Debug.Log("=== OnAttackEnd END ===");
+
         isAttacking = false;
         currentAttack = null;
     }
@@ -301,7 +422,7 @@ public class AttackController : MonoBehaviour
             return;
         }
 
-        float directionMultiplier = spriteRenderer.flipX ? -1f : 1f;
+        float directionMultiplier = transform.localScale.x < 0 ? -1f : 1f;
         Vector2 offset = new Vector2(
             attackData.hitboxOffset.x * directionMultiplier,
             attackData.hitboxOffset.y
@@ -328,8 +449,6 @@ public class AttackController : MonoBehaviour
         float finalDamage = WeaponManager.Instance.CalculateFinalDamage(attackData.damage);
         hitbox.Initialize(finalDamage, attackData.attackName);
 
-        Debug.Log("Hitbox created: " + spawnPos + ", Damage: " + finalDamage);
-
         StartCoroutine(ReturnHitboxDelayed(hitboxObj, attackData.hitboxShape, attackData.hitboxDuration));
     }
 
@@ -337,7 +456,7 @@ public class AttackController : MonoBehaviour
     {
         if (!attackData.hasEffect || attackData.effectPrefab == null) return;
 
-        float directionMultiplier = spriteRenderer.flipX ? -1f : 1f;
+        float directionMultiplier = transform.localScale.x < 0 ? -1f : 1f;
         Vector2 offset = new Vector2(
             attackData.effectOffset.x * directionMultiplier,
             attackData.effectOffset.y
@@ -348,14 +467,12 @@ public class AttackController : MonoBehaviour
         GameObject effect = Instantiate(attackData.effectPrefab, spawnPos, Quaternion.identity);
         effect.transform.SetParent(effectParent);
 
-        if (spriteRenderer.flipX)
+        if (transform.localScale.x < 0)
         {
             Vector3 scale = effect.transform.localScale;
             scale.x *= -1;
             effect.transform.localScale = scale;
         }
-
-        Debug.Log("Effect created: " + attackData.effectPrefab.name);
 
         Destroy(effect, attackData.effectDuration);
     }
