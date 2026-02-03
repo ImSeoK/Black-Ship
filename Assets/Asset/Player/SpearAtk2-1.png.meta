@@ -1,70 +1,70 @@
 fileFormatVersion: 2
-guid: 2bf4c9801fc4fc047b62597bc6211b5d
+guid: 4f0edad444ae7124b831ff68ec225dc7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8280064083711762762
-    second: SpearATK_0
+      213: 3129147977212937680
+    second: SpearAtk2_0
   - first:
-      213: 329554185046459424
-    second: SpearATK_1
+      213: -2948091806337087364
+    second: SpearAtk2_1
   - first:
-      213: 2723383459429746430
-    second: SpearATK_2
+      213: 3552796652324852862
+    second: SpearAtk2_2
   - first:
-      213: 9064274448602719579
-    second: SpearATK_3
+      213: -7432321280655448314
+    second: SpearAtk2_3
   - first:
-      213: -6882672066718172264
-    second: SpearATK_4
+      213: -2146733556692916306
+    second: SpearAtk2_4
   - first:
-      213: 2116231973857243745
-    second: SpearATK_5
+      213: 8213017087305124079
+    second: SpearAtk2_5
   - first:
-      213: 6500240104368533239
-    second: SpearATK_6
+      213: 1965381261552750562
+    second: SpearAtk2_6
   - first:
-      213: -4386858269887640614
-    second: SpearATK_7
+      213: -8711787220162042363
+    second: SpearAtk2_7
   - first:
-      213: -8597186163735670441
-    second: SpearATK_8
+      213: -8025869648670994826
+    second: SpearAtk2_8
   - first:
-      213: -1536979484394620595
-    second: SpearATK_9
+      213: 8401551036993630996
+    second: SpearAtk2_9
   - first:
-      213: -3984639213132543298
-    second: SpearATK_10
+      213: 3614879020993517876
+    second: SpearAtk2_10
   - first:
-      213: -6629961766974275082
-    second: SpearATK_11
+      213: -2635712585599689952
+    second: SpearAtk2_11
   - first:
-      213: 2780041961904167782
-    second: SpearATK_12
+      213: -8128058836867306533
+    second: SpearAtk2_12
   - first:
-      213: 1756693927643758614
-    second: SpearATK_13
+      213: 8305227908456938167
+    second: SpearAtk2_13
   - first:
-      213: 5797417438611000445
-    second: SpearATK_14
+      213: 2932945476081986056
+    second: SpearAtk2_14
   - first:
-      213: 167537864986589782
-    second: SpearATK_15
+      213: -1055091079467077028
+    second: SpearAtk2_15
   - first:
-      213: -4057767461492033856
-    second: SpearATK_16
+      213: -3050799382778545098
+    second: SpearAtk2_16
   - first:
-      213: -2497972917018755005
-    second: SpearATK_17
+      213: 8535836206905701413
+    second: SpearAtk2_17
   - first:
-      213: 1762765227555663291
-    second: SpearATK_18
+      213: -6251916670947469919
+    second: SpearAtk2_18
   - first:
-      213: 4714602872889546520
-    second: SpearATK_19
+      213: -8027881945372654980
+    second: SpearAtk2_19
   - first:
-      213: -3563945805518864305
-    second: SpearATK_20
+      213: -1846483688042427068
+    second: SpearAtk2_20
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -160,7 +160,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SpearATK_0
+      name: SpearAtk2_0
       rect:
         serializedVersion: 2
         x: 0
@@ -175,14 +175,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a412c1b1a62b8e270800000000000000
-      internalID: 8280064083711762762
+      spriteID: 0d5c86f9187fc6b20800000000000000
+      internalID: 3129147977212937680
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_1
+      name: SpearAtk2_1
       rect:
         serializedVersion: 2
         x: 350
@@ -197,14 +197,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 02400f509cfc29400800000000000000
-      internalID: 329554185046459424
+      spriteID: c78c90e2f164617d0800000000000000
+      internalID: -2948091806337087364
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_2
+      name: SpearAtk2_2
       rect:
         serializedVersion: 2
         x: 700
@@ -219,14 +219,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ef60c76c3d66bc520800000000000000
-      internalID: 2723383459429746430
+      spriteID: e7415055bb11e4130800000000000000
+      internalID: 3552796652324852862
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_3
+      name: SpearAtk2_3
       rect:
         serializedVersion: 2
         x: 1050
@@ -241,14 +241,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b556d9f1695cacd70800000000000000
-      internalID: 9064274448602719579
+      spriteID: 607a4f16c271bd890800000000000000
+      internalID: -7432321280655448314
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_4
+      name: SpearAtk2_4
       rect:
         serializedVersion: 2
         x: 1400
@@ -263,14 +263,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 89b72c5a836db70a0800000000000000
-      internalID: -6882672066718172264
+      spriteID: ea768ed34354532e0800000000000000
+      internalID: -2146733556692916306
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_5
+      name: SpearAtk2_5
       rect:
         serializedVersion: 2
         x: 1750
@@ -285,14 +285,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 162b51894cd5e5d10800000000000000
-      internalID: 2116231973857243745
+      spriteID: fe80907c68f7af170800000000000000
+      internalID: 8213017087305124079
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_6
+      name: SpearAtk2_6
       rect:
         serializedVersion: 2
         x: 2100
@@ -307,14 +307,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7fe62a76fed753a50800000000000000
-      internalID: 6500240104368533239
+      spriteID: 2ef8f0728df664b10800000000000000
+      internalID: 1965381261552750562
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_7
+      name: SpearAtk2_7
       rect:
         serializedVersion: 2
         x: 2450
@@ -329,14 +329,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: adbcc5765afbe13c0800000000000000
-      internalID: -4386858269887640614
+      spriteID: 50624772ea3891780800000000000000
+      internalID: -8711787220162042363
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_8
+      name: SpearAtk2_8
       rect:
         serializedVersion: 2
         x: 2800
@@ -351,14 +351,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 751d1a2ebb8a0b880800000000000000
-      internalID: -8597186163735670441
+      spriteID: 67e4061d3126e9090800000000000000
+      internalID: -8025869648670994826
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_9
+      name: SpearAtk2_9
       rect:
         serializedVersion: 2
         x: 3150
@@ -373,14 +373,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d49789d5d4d8baae0800000000000000
-      internalID: -1536979484394620595
+      spriteID: 413f152a72e489470800000000000000
+      internalID: 8401551036993630996
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_10
+      name: SpearAtk2_10
       rect:
         serializedVersion: 2
         x: 3500
@@ -395,14 +395,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eba84274fb7b3b8c0800000000000000
-      internalID: -3984639213132543298
+      spriteID: 43994503151aa2230800000000000000
+      internalID: 3614879020993517876
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_11
+      name: SpearAtk2_11
       rect:
         serializedVersion: 2
         x: 3850
@@ -417,14 +417,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6f1c31566e4adf3a0800000000000000
-      internalID: -6629961766974275082
+      spriteID: 02bdd453e511c6bd0800000000000000
+      internalID: -2635712585599689952
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_12
+      name: SpearAtk2_12
       rect:
         serializedVersion: 2
         x: 4200
@@ -439,14 +439,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 66b5aff5f61b49620800000000000000
-      internalID: 2780041961904167782
+      spriteID: bdbac0b5d85533f80800000000000000
+      internalID: -8128058836867306533
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_13
+      name: SpearAtk2_13
       rect:
         serializedVersion: 2
         x: 4550
@@ -461,14 +461,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 610ca40e1d7016810800000000000000
-      internalID: 1756693927643758614
+      spriteID: 7ba7c3e97c8124370800000000000000
+      internalID: 8305227908456938167
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_14
+      name: SpearAtk2_14
       rect:
         serializedVersion: 2
         x: 4900
@@ -483,8 +483,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d7c4013c170947050800000000000000
-      internalID: 5797417438611000445
+      spriteID: 80aa47ffe5ae3b820800000000000000
+      internalID: 2932945476081986056
       vertices: []
       indices: 
       edges: []
@@ -493,7 +493,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 61dd20faafa90004a90f24541f81b9c9
+    spriteID: 8383ac26d13ba1e48946d3c2c7196567
     internalID: 0
     vertices: []
     indices: 
@@ -503,21 +503,21 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SpearATK_0: 8280064083711762762
-      SpearATK_1: 329554185046459424
-      SpearATK_10: -3984639213132543298
-      SpearATK_11: -6629961766974275082
-      SpearATK_12: 2780041961904167782
-      SpearATK_13: 1756693927643758614
-      SpearATK_14: 5797417438611000445
-      SpearATK_2: 2723383459429746430
-      SpearATK_3: 9064274448602719579
-      SpearATK_4: -6882672066718172264
-      SpearATK_5: 2116231973857243745
-      SpearATK_6: 6500240104368533239
-      SpearATK_7: -4386858269887640614
-      SpearATK_8: -8597186163735670441
-      SpearATK_9: -1536979484394620595
+      SpearAtk2_0: 3129147977212937680
+      SpearAtk2_1: -2948091806337087364
+      SpearAtk2_10: 3614879020993517876
+      SpearAtk2_11: -2635712585599689952
+      SpearAtk2_12: -8128058836867306533
+      SpearAtk2_13: 8305227908456938167
+      SpearAtk2_14: 2932945476081986056
+      SpearAtk2_2: 3552796652324852862
+      SpearAtk2_3: -7432321280655448314
+      SpearAtk2_4: -2146733556692916306
+      SpearAtk2_5: 8213017087305124079
+      SpearAtk2_6: 1965381261552750562
+      SpearAtk2_7: -8711787220162042363
+      SpearAtk2_8: -8025869648670994826
+      SpearAtk2_9: 8401551036993630996
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

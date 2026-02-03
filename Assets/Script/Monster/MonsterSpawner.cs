@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MonsterSpawner : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MonsterSpawner : MonoBehaviour
     public float minDistanceFromPlayer = 10f;
 
     private List<Monster> activeMonsters = new List<Monster>();
-    private Dictionary<MonsterData, Queue<Monster>> monsterPools = new Dictionary<MonsterData, Queue<Monster>>();
+    private Dictionary<string, Queue<Monster>> monsterPools = new Dictionary<string, Queue<Monster>>(); // ← 변경!
     private float spawnTimer;
     private Transform player;
 
@@ -32,12 +33,11 @@ public class MonsterSpawner : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        InitializePools();
+        InitializePool();
 
-        // 초기 스폰
         for (int i = 0; i < maxMonsters / 2; i++)
         {
-            SpawnRandomMonster();
+            SpawnMonster();
         }
     }
 
@@ -47,71 +47,41 @@ public class MonsterSpawner : MonoBehaviour
 
         if (spawnTimer >= spawnInterval && activeMonsters.Count < maxMonsters)
         {
-            SpawnRandomMonster();
+            SpawnMonster();
             spawnTimer = 0f;
         }
+
+        // 디버그
+        Debug.Log("Active: " + activeMonsters.Count + "/" + maxMonsters);
     }
 
-    void InitializePools()
+    void InitializePool()
     {
         foreach (var spawnData in monsterTypes)
         {
-            Queue<Monster> pool = new Queue<Monster>();
+            string monsterName = spawnData.monsterPrefab.monsterName;
+
+            if (!monsterPools.ContainsKey(monsterName))
+            {
+                monsterPools[monsterName] = new Queue<Monster>();
+            }
 
             for (int i = 0; i < spawnData.poolSize; i++)
             {
-                Monster monster = CreateMonster(spawnData.monsterData);
+                Monster monster = Instantiate(spawnData.monsterPrefab, transform);
+                monster.spawner = this;
+                monster.gameObject.tag = "Enemy";
+                monster.gameObject.layer = LayerMask.NameToLayer("Enemy");
                 monster.gameObject.SetActive(false);
-                pool.Enqueue(monster);
+
+                monsterPools[monsterName].Enqueue(monster);
             }
 
-            monsterPools[spawnData.monsterData] = pool;
+            Debug.Log("Initialized pool for " + monsterName + ": " + spawnData.poolSize);
         }
     }
 
-    Monster CreateMonster(MonsterData data)
-    {
-
-        GameObject monsterObj = new GameObject(data.monsterName);
-        monsterObj.transform.SetParent(transform);
-
-        // Layer 설정 추가!
-        monsterObj.layer = LayerMask.NameToLayer("Enemy");
-
-        // Sprite Renderer
-        SpriteRenderer sr = monsterObj.AddComponent<SpriteRenderer>();
-        sr.sprite = data.sprite;
-        sr.sortingOrder = 5;
-
-        // Animator
-        Animator animator = monsterObj.AddComponent<Animator>();
-        if (data.animatorController != null)
-            animator.runtimeAnimatorController = data.animatorController;
-
-        // Rigidbody2D
-        Rigidbody2D rb = monsterObj.AddComponent<Rigidbody2D>();
-        rb.gravityScale = 0;
-        rb.freezeRotation = true;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-
-        // Collider
-        CircleCollider2D collider = monsterObj.AddComponent<CircleCollider2D>();
-        collider.radius = 0.5f;
-
-        // YAxisSorting (있다면)
-        //YAxisSorting yAxis = monsterObj.AddComponent<YAxisSorting>();
-        //yAxis.sortingOrderBase = 5000;
-        //yAxis.isStatic = false;
-
-        // Monster 스크립트
-        Monster monster = monsterObj.AddComponent<Monster>();
-        monster.data = data;
-        monster.spawner = this;
-
-        return monster;
-    }
-
-    public void SpawnRandomMonster()
+    public void SpawnMonster()
     {
         if (monsterTypes.Count == 0) return;
 
@@ -135,44 +105,53 @@ public class MonsterSpawner : MonoBehaviour
             }
         }
 
-        Monster monster = GetMonsterFromPool(selectedData.monsterData);
+        Monster monster = GetMonsterFromPool(selectedData.monsterPrefab);
 
         if (monster != null)
         {
             Vector2 spawnPos = GetRandomSpawnPosition();
             monster.transform.position = spawnPos;
-
             monster.gameObject.SetActive(true);
             monster.OnSpawn();
 
             activeMonsters.Add(monster);
 
-            Debug.Log($"{selectedData.monsterData.monsterName} 스폰: {spawnPos}");
-        }
-    }
-
-    Monster GetMonsterFromPool(MonsterData data)
-    {
-        if (monsterPools.ContainsKey(data) && monsterPools[data].Count > 0)
-        {
-            return monsterPools[data].Dequeue();
+            Debug.Log("Spawned " + monster.monsterName + " at " + spawnPos);
         }
         else
         {
-            return CreateMonster(data);
+            Debug.LogWarning("No available monsters in pool!");
         }
+    }
+
+    Monster GetMonsterFromPool(Monster prefab)
+    {
+        string monsterName = prefab.monsterName;
+
+        if (monsterPools.ContainsKey(monsterName) && monsterPools[monsterName].Count > 0)
+        {
+            Monster monster = monsterPools[monsterName].Dequeue();
+            Debug.Log("Got " + monsterName + " from pool. Remaining: " + monsterPools[monsterName].Count);
+            return monster;
+        }
+
+        Debug.LogWarning("Pool empty for " + monsterName + "! Cannot spawn.");
+        return null; // ← 풀 비면 null 반환 (새로 생성 안 함!)
     }
 
     public void ReturnMonsterToPool(Monster monster)
     {
         if (monster == null) return;
 
+        string monsterName = monster.monsterName;
+
         activeMonsters.Remove(monster);
         monster.gameObject.SetActive(false);
 
-        if (monsterPools.ContainsKey(monster.data))
+        if (monsterPools.ContainsKey(monsterName))
         {
-            monsterPools[monster.data].Enqueue(monster);
+            monsterPools[monsterName].Enqueue(monster);
+            Debug.Log("Returned " + monsterName + " to pool. Pool size: " + monsterPools[monsterName].Count);
         }
     }
 
@@ -189,7 +168,7 @@ public class MonsterSpawner : MonoBehaviour
             attempts++;
 
         } while (player != null &&
-                 Vector2.Distance(spawnPos, player.transform.position) < minDistanceFromPlayer &&
+                 Vector2.Distance(spawnPos, player.position) < minDistanceFromPlayer &&
                  attempts < 20);
 
         return spawnPos;
@@ -207,7 +186,7 @@ public class MonsterSpawner : MonoBehaviour
 [System.Serializable]
 public class MonsterSpawnData
 {
-    public MonsterData monsterData;
+    public Monster monsterPrefab;
     public int poolSize = 5;
     [Range(0f, 1f)]
     public float spawnWeight = 1f;

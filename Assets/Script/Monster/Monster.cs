@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public enum MonsterState
 {
@@ -11,23 +12,41 @@ public enum MonsterState
 
 public class Monster : MonoBehaviour
 {
-    [Header("���� ������")]
-    public MonsterData data;
+    [Header("Monster Info")]
+    public string monsterName = "Slime";
+    public Sprite sprite;
+    public RuntimeAnimatorController animatorController;
 
-    [Header("���� ����")]
-    public MonsterState currentState = MonsterState.Idle;
-    public float currentHealth;
+    [Header("Stats")]
+    public float maxHealth = 50f;
+    public float moveSpeed = 2f;
+    public float chaseSpeed = 3.5f;
+    public float attackDamage = 10f;
 
-    [HideInInspector]
+    [Header("Detection")]
+    public float detectionRange = 8f;
+    public float attackRange = 1.5f;
+    public float chaseGiveUpRange = 15f;
+    public float attackCooldown = 2f;
+
+    [Header("Wander")]
+    public float wanderDistance = 5f;
+    public float wanderWaitTime = 3f;
+
+    [Header("References")]
     public MonsterSpawner spawner;
 
     private Transform player;
-    private SpriteRenderer spriteRenderer;
-    private Animator animator;
     private Rigidbody2D rb;
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
-    private float attackTimer;
-    private float wanderTimer;
+    private MonsterState state;
+    private float currentHealth;
+    private bool isDead = false;
+
+    private float lastAttackTime = 0f;
+    private float wanderTimer = 0f;
     private Vector2 wanderTarget;
 
     void Start()
@@ -41,30 +60,55 @@ public class Monster : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
-        if (data != null)
+        if (spriteRenderer != null && sprite != null)
         {
-            spriteRenderer.sprite = data.sprite;
-            if (data.animatorController != null)
-                animator.runtimeAnimatorController = data.animatorController;
+            spriteRenderer.sprite = sprite;
+        }
+
+        if (animator != null && animatorController != null)
+        {
+            animator.runtimeAnimatorController = animatorController;
         }
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        Debug.Log("InitializeComponents: SpriteRenderer=" + (spriteRenderer != null) +
+                  ", Animator=" + (animator != null) +
+                  ", RB=" + (rb != null));
     }
 
     public void OnSpawn()
     {
-        currentHealth = data.maxHealth;
-        ChangeState(MonsterState.Idle);
+        // 컴포넌트 null이면 재초기화
+        if (spriteRenderer == null || animator == null || rb == null)
+        {
+            Debug.LogWarning("Components null! Re-initializing...");
+            InitializeComponents();
+        }
+
+        currentHealth = maxHealth;
+        isDead = false;
 
         if (player == null)
+        {
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        }
+
+        Debug.Log("=== OnSpawn ===" +
+                  "\nMonster: " + monsterName +
+                  "\nHP: " + currentHealth +
+                  "\nRB: " + (rb != null) +
+                  "\nAnimator: " + (animator != null) +
+                  "\nPlayer: " + (player != null));
+
+        ChangeState(MonsterState.Idle);
     }
 
     void Update()
     {
-        if (currentState == MonsterState.Die) return;
+        if (state == MonsterState.Die) return;
 
-        switch (currentState)
+        switch (state)
         {
             case MonsterState.Idle:
                 IdleBehavior();
@@ -81,7 +125,6 @@ public class Monster : MonoBehaviour
         }
 
         CheckPlayerDetection();
-        UpdateAnimations();
     }
 
     void CheckPlayerDetection()
@@ -90,20 +133,25 @@ public class Monster : MonoBehaviour
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        if (distanceToPlayer <= data.attackRange)
+        if (distanceToPlayer <= attackRange)
         {
-            if (currentState != MonsterState.Attack)
+            if (state != MonsterState.Attack)
                 ChangeState(MonsterState.Attack);
         }
-        else if (distanceToPlayer <= data.detectionRange)
+        else if (distanceToPlayer <= detectionRange)
         {
-            if (currentState != MonsterState.Chase)
+            if (state != MonsterState.Chase)
                 ChangeState(MonsterState.Chase);
         }
-        else if (distanceToPlayer > data.chaseGiveUpRange && currentState == MonsterState.Chase)
+        else if (distanceToPlayer > chaseGiveUpRange && state == MonsterState.Chase)
         {
             ChangeState(MonsterState.Idle);
         }
+    }
+
+    public float GetHealthPercent()
+    {
+        return currentHealth / maxHealth;
     }
 
     void IdleBehavior()
@@ -120,7 +168,7 @@ public class Monster : MonoBehaviour
     void WanderBehavior()
     {
         Vector2 direction = (wanderTarget - (Vector2)transform.position).normalized;
-        rb.linearVelocity = direction * data.moveSpeed;
+        rb.linearVelocity = direction * moveSpeed;
 
         FlipSprite(direction.x);
 
@@ -135,7 +183,7 @@ public class Monster : MonoBehaviour
         if (player == null) return;
 
         Vector2 direction = (player.position - transform.position).normalized;
-        rb.linearVelocity = direction * data.chaseSpeed;
+        rb.linearVelocity = direction * chaseSpeed;
 
         FlipSprite(direction.x);
     }
@@ -144,117 +192,108 @@ public class Monster : MonoBehaviour
     {
         rb.linearVelocity = Vector2.zero;
 
-        if (player != null)
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
+        if (distanceToPlayer <= attackRange)
         {
-            float directionX = player.position.x - transform.position.x;
-            FlipSprite(directionX);
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                if (animator != null)
+                {
+                    animator.SetTrigger("Attack");
+                }
+
+                lastAttackTime = Time.time;
+            }
         }
-
-        attackTimer -= Time.deltaTime;
-
-        if (attackTimer <= 0)
+        else
         {
-            PerformAttack();
-            attackTimer = data.attackCooldown;
+            ChangeState(MonsterState.Chase);
         }
-    }
-
-    void PerformAttack()
-    {
-        Debug.Log($"{data.monsterName} ����! ������: {data.attackDamage}");
-        animator.SetTrigger("Attack");
-
-        // �÷��̾� ������ ó�� (���߿� ����)
-        // PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-        // if (playerHealth != null)
-        //     playerHealth.TakeDamage(data.attackDamage);
     }
 
     public void TakeDamage(float damage)
     {
-        if (currentState == MonsterState.Die) return;
+        if (isDead)
+        {
+            Debug.LogWarning(monsterName + " is already dead!");
+            return;
+        }
 
         currentHealth -= damage;
-        Debug.Log($"{data.monsterName} ����: {damage}, ���� ü��: {currentHealth}");
 
-        animator.SetTrigger("Hit");
+        Debug.Log(">>> HIT: " + monsterName +
+                  " took " + damage + " damage. HP: " +
+                  currentHealth + "/" + maxHealth);
 
         if (currentHealth <= 0)
         {
+            Debug.Log(">>> DYING: " + monsterName + " HP reached 0!");
             Die();
         }
     }
 
     void Die()
     {
-        ChangeState(MonsterState.Die);
+        isDead = true;
         rb.linearVelocity = Vector2.zero;
 
-        Debug.Log($"{data.monsterName} ���! ����ġ: {data.expReward}");
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
 
-        animator.SetTrigger("Die");
+        Debug.Log(monsterName + " died!");
 
-        // ����ġ ���� (���߿� ����)
-        // StatsManager.Instance.AddExp(data.expReward);
+        StartCoroutine(DieAfterAnimation());
+    }
+
+    IEnumerator DieAfterAnimation()
+    {
+        // 애니메이션 길이에 맞추기 (나중에 사용)
+        // AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        // float animLength = stateInfo.length;
+        // yield return new WaitForSeconds(animLength);
+
+        // 즉시 사라지기
+        yield return null;
 
         if (spawner != null)
         {
-            Invoke(nameof(ReturnToPool), 1.5f);
+            spawner.ReturnMonsterToPool(this);
         }
         else
         {
-            Destroy(gameObject, 1.5f);
+            Destroy(gameObject);
         }
-    }
-
-    void ReturnToPool()
-    {
-        if (spawner != null)
-            spawner.ReturnMonsterToPool(this);
     }
 
     void ChangeState(MonsterState newState)
     {
-        currentState = newState;
+        state = newState;
 
         switch (newState)
         {
             case MonsterState.Idle:
-                rb.linearVelocity = Vector2.zero;
-                wanderTimer = data.wanderWaitTime;
+                if (rb != null) // null 체크 추가!
+                {
+                    rb.linearVelocity = Vector2.zero;
+                }
+                wanderTimer = wanderWaitTime;
                 break;
 
             case MonsterState.Wander:
                 Vector2 randomDirection = Random.insideUnitCircle.normalized;
-                wanderTarget = (Vector2)transform.position + randomDirection * data.wanderDistance;
-                break;
-
-            case MonsterState.Chase:
-                break;
-
-            case MonsterState.Attack:
-                attackTimer = 0f;
+                wanderTarget = (Vector2)transform.position + randomDirection * wanderDistance;
                 break;
         }
     }
 
-    void UpdateAnimations()
-    {
-        if (animator == null) return;
-
-        // Speed �Ķ���� (Idle/Walk ��ȯ)
-        float speed = rb.linearVelocity.magnitude;
-        animator.SetFloat("Speed", speed);
-
-        // IsChasing �Ķ���� (�߰� ����)
-        animator.SetBool("IsChasing", currentState == MonsterState.Chase);
-    }
-
     void FlipSprite(float directionX)
     {
-        if (directionX < 0)
-            spriteRenderer.flipX = true;
-        else if (directionX > 0)
-            spriteRenderer.flipX = false;
+        if (directionX > 0)
+            spriteRenderer.flipX = true; // 오른쪽 가려면 반전!
+        else if (directionX < 0)
+            spriteRenderer.flipX = false; // 왼쪽은 원본 그대로
     }
 }

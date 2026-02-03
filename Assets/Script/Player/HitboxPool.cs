@@ -16,10 +16,12 @@ public class HitboxPool : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         InitializePool();
@@ -94,13 +96,6 @@ public class HitboxPool : MonoBehaviour
 
         hitbox.SetActive(false);
         hitbox.transform.SetParent(transform);
-
-        // 컴포넌트 리셋
-        AttackHitbox component = hitbox.GetComponent<AttackHitbox>();
-        if (component != null)
-        {
-            component.ResetHitbox();
-        }
 
         Queue<GameObject> pool = shape == HitboxShape.Box ? boxPool : circlePool;
         pool.Enqueue(hitbox);

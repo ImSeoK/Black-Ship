@@ -14,16 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackName: SpearATK2
   attackType: 1
-  damage: 10
+  damage: 20
   cooldown: 0.5
   animationTrigger: SpearATK2
-  animationDuration: 0.5
+  animationDuration: 1.15
   timingMode: 1
+  useMultiPhaseHitbox: 1
+  allowMovementDuringAttack: 0
   hitboxShape: 0
   hitboxOffset: {x: 0, y: 0}
   hitboxSize: {x: 0, y: 0}
-  hitboxActiveTime: 0.1
-  hitboxDuration: 0.15
+  hitboxActiveTime: 0
+  hitboxDuration: 0
+  hitboxPhases:
+  - activeTime: 0
+    duration: 0.1
+    shape: 0
+    offset: {x: 2.5, y: 1}
+    size: {x: 2, y: 3}
+    radius: 0
+    damageMultiplier: 1
+  - activeTime: 0
+    duration: 0.15
+    shape: 0
+    offset: {x: 7, y: 1}
+    size: {x: 3, y: 4}
+    radius: 0
+    damageMultiplier: 2
   hasEffect: 0
   effectPrefab: {fileID: 0}
   effectOffset: {x: 0, y: 0}

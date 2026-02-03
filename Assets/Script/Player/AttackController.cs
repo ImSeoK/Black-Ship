@@ -19,8 +19,6 @@ public class AttackController : MonoBehaviour
     public Transform hitboxParent;
     public Transform effectParent;
 
-    private CameraFollow cameraFollow;
-
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
@@ -43,11 +41,6 @@ public class AttackController : MonoBehaviour
         }
     }
 
-    void OnEnable()
-    {
-        FindCameraFollow();
-    }
-
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -56,8 +49,6 @@ public class AttackController : MonoBehaviour
 
         if (hitboxParent == null) hitboxParent = transform;
         if (effectParent == null) effectParent = transform;
-
-        FindCameraFollow();
 
         LoadWeaponFromManager();
     }
@@ -99,20 +90,6 @@ public class AttackController : MonoBehaviour
         hasWeapon = attacks.Count > 0;
 
         Debug.Log("Attack patterns loaded: " + attackSet.weaponType + " (" + attacks.Count + " attacks)");
-    }
-
-    void FindCameraFollow()
-    {
-        cameraFollow = Object.FindAnyObjectByType<CameraFollow>();
-
-        if (cameraFollow == null)
-        {
-            Debug.LogWarning("CameraFollow not found! Camera won't move during skills.");
-        }
-        else
-        {
-            Debug.Log("CameraFollow found on: " + cameraFollow.gameObject.name);
-        }
     }
 
     bool HasAnimationTrigger(string triggerName)
@@ -229,9 +206,9 @@ public class AttackController : MonoBehaviour
                 StartCoroutine(SpawnHitboxDelayed(attackData, attackData.hitboxActiveTime));
             }
 
-            // shiftsPosition이면 카메라 이동, 아니면 제자리
             if (attackData.shiftsPosition)
             {
+                // 매 프레임 이동 방식
                 yield return StartCoroutine(MoveCameraWithSkill(attackData));
             }
             else
@@ -308,38 +285,34 @@ public class AttackController : MonoBehaviour
     {
         float direction = transform.localScale.x < 0 ? -1f : 1f;
 
-        Vector2 cameraShift = new Vector2(
-            attackData.positionShift.x * direction,
-            attackData.positionShift.y
-        );
-
-        // 이동량 저장 (OnAttackEnd에서 사용)
-        pendingPositionShift = cameraShift;
+        float totalDistance = attackData.positionShift.x * direction;
+        float movePerFrame = attackData.moveSpeedPerFrame * direction;
 
         float duration = attackData.animationDuration;
         float elapsed = 0f;
 
-        if (cameraFollow == null)
-        {
-            FindCameraFollow();
-        }
-
-        if (cameraFollow == null)
-        {
-            Debug.LogError("CameraFollow not found in scene!");
-            yield break;
-        }
-
-        cameraFollow.ResetTempOffset();
+        float movedDistance = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / duration;
 
-            Vector3 currentOffset = Vector2.Lerp(Vector2.zero, cameraShift, t);
+            // 목표 거리 도달 안 했으면 이동
+            if (Mathf.Abs(movedDistance) < Mathf.Abs(totalDistance))
+            {
+                Vector2 movement = new Vector2(movePerFrame, 0);
+                transform.position = (Vector2)transform.position + movement;
 
-            cameraFollow.SetTempOffset(currentOffset);
+                movedDistance += movePerFrame;
+
+                // 목표 거리 초과 방지
+                if (Mathf.Abs(movedDistance) > Mathf.Abs(totalDistance))
+                {
+                    float overshoot = Mathf.Abs(movedDistance) - Mathf.Abs(totalDistance);
+                    transform.position = (Vector2)transform.position - new Vector2(overshoot * direction, 0);
+                    movedDistance = totalDistance;
+                }
+            }
 
             if (rb != null)
             {
@@ -348,6 +321,9 @@ public class AttackController : MonoBehaviour
 
             yield return null;
         }
+
+        // 이동 완료, 추가 처리 없음
+        pendingPositionShift = Vector2.zero;
     }
 
     void CreatePathHitbox(Vector2 startPos, Vector2 endPos, float duration)
@@ -374,11 +350,104 @@ public class AttackController : MonoBehaviour
         Destroy(hitboxObj, duration);
     }
 
+    // ===== 다단계 히트박스 지원 메서드 =====
+
     public void OnAttackHitboxSpawn()
     {
         if (currentAttack == null) return;
-        SpawnHitboxNow(currentAttack);
+
+        if (currentAttack.useMultiPhaseHitbox)
+        {
+            Debug.LogWarning("Multi-phase hitbox should use SpawnHitboxPhase(index) instead!");
+        }
+        else
+        {
+            SpawnHitboxNow(currentAttack);
+        }
     }
+
+    // Animation Event에서 호출: SpawnHitboxPhase(0), SpawnHitboxPhase(1) 등
+    public void SpawnHitboxPhase(int phaseIndex)
+    {
+        if (currentAttack == null)
+        {
+            Debug.LogError("No current attack!");
+            return;
+        }
+
+        if (!currentAttack.useMultiPhaseHitbox)
+        {
+            Debug.LogWarning("Attack is not multi-phase! Use OnAttackHitboxSpawn() instead.");
+            return;
+        }
+
+        if (phaseIndex >= currentAttack.GetPhaseCount())
+        {
+            Debug.LogError($"Phase index {phaseIndex} out of range!");
+            return;
+        }
+
+        SpawnHitboxPhaseNow(currentAttack, phaseIndex);
+    }
+
+    void SpawnHitboxPhaseNow(AttackData attackData, int phaseIndex)
+    {
+        Debug.Log($"=== SpawnHitboxPhase {phaseIndex} ===");
+
+        if (HitboxPool.Instance == null)
+        {
+            Debug.LogError("HitboxPool not found!");
+            return;
+        }
+
+        HitboxPhase phase = attackData.GetHitboxPhase(phaseIndex);
+        float directionMultiplier = transform.localScale.x < 0 ? -1f : 1f;
+
+        Vector2 offset = new Vector2(
+            phase.offset.x * directionMultiplier,
+            phase.offset.y
+        );
+        Vector2 spawnPos = (Vector2)hitboxParent.position + offset;
+
+        GameObject hitboxObj = HitboxPool.Instance.Get(phase.shape);
+        hitboxObj.transform.position = spawnPos;
+        hitboxObj.transform.SetParent(hitboxParent);
+
+        if (phase.shape == HitboxShape.Box)
+        {
+            BoxCollider2D box = hitboxObj.GetComponent<BoxCollider2D>();
+            box.size = phase.size;
+            box.offset = Vector2.zero;
+
+            Debug.Log($"Phase {phaseIndex} Box at {spawnPos}, size: {phase.size}");
+        }
+        else
+        {
+            CircleCollider2D circle = hitboxObj.GetComponent<CircleCollider2D>();
+            circle.radius = phase.radius;
+            circle.offset = Vector2.zero;
+
+            Debug.Log($"Phase {phaseIndex} Circle at {spawnPos}, radius: {phase.radius}");
+        }
+
+        float phaseDamage = attackData.damage * phase.damageMultiplier;
+        float finalDamage = WeaponManager.Instance.CalculateFinalDamage(phaseDamage);
+
+        AttackHitbox hitbox = hitboxObj.GetComponent<AttackHitbox>();
+        hitbox.Initialize(finalDamage, $"{attackData.attackName}_Phase{phaseIndex}");
+
+        Debug.Log($"Phase {phaseIndex} damage: {finalDamage}");
+
+        StartCoroutine(ReturnHitboxDelayed(hitboxObj, phase.shape, phase.duration));
+    }
+
+    IEnumerator SpawnHitboxPhaseDelayed(AttackData attackData, int phaseIndex, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SpawnHitboxPhaseNow(attackData, phaseIndex);
+    }
+
+    // ===== 기존 메서드들 =====
 
     public void OnAttackEffectSpawn()
     {
@@ -388,34 +457,14 @@ public class AttackController : MonoBehaviour
 
     public void OnAttackEnd()
     {
-        Debug.Log("=== OnAttackEnd START ===");
-        Debug.Log("pendingPositionShift: " + pendingPositionShift);
-        Debug.Log("Player pos BEFORE: " + transform.position);
-
-        if (pendingPositionShift.magnitude > 0.01f)
-        {
-            // 카메라 오프셋 먼저 리셋
-            if (cameraFollow != null)
-            {
-                Debug.Log("Resetting camera offset");
-                cameraFollow.ResetTempOffset();
-            }
-
-            // Transform 이동
-            transform.position = (Vector2)transform.position + pendingPositionShift;
-            Debug.Log("Player pos AFTER: " + transform.position);
-
-            pendingPositionShift = Vector2.zero;
-        }
-
-        Debug.Log("=== OnAttackEnd END ===");
-
         isAttacking = false;
         currentAttack = null;
     }
 
     void SpawnHitboxNow(AttackData attackData)
     {
+        Debug.Log("=== SpawnHitboxNow called ===");
+
         if (HitboxPool.Instance == null)
         {
             Debug.LogError("HitboxPool not found!");
@@ -423,11 +472,11 @@ public class AttackController : MonoBehaviour
         }
 
         float directionMultiplier = transform.localScale.x < 0 ? -1f : 1f;
+
         Vector2 offset = new Vector2(
             attackData.hitboxOffset.x * directionMultiplier,
             attackData.hitboxOffset.y
         );
-
         Vector2 spawnPos = (Vector2)hitboxParent.position + offset;
 
         GameObject hitboxObj = HitboxPool.Instance.Get(attackData.hitboxShape);
@@ -438,16 +487,26 @@ public class AttackController : MonoBehaviour
         {
             BoxCollider2D box = hitboxObj.GetComponent<BoxCollider2D>();
             box.size = attackData.hitboxSize;
+
+            Debug.Log("Hitbox Box created at " + spawnPos + ", size: " + attackData.hitboxSize +
+                      "\nLayer: " + LayerMask.LayerToName(hitboxObj.layer) +
+                      "\nIs Trigger: " + box.isTrigger);
         }
         else
         {
             CircleCollider2D circle = hitboxObj.GetComponent<CircleCollider2D>();
             circle.radius = attackData.hitboxSize.x;
+
+            Debug.Log("Hitbox Circle created at " + spawnPos + ", radius: " + attackData.hitboxSize.x +
+                      "\nLayer: " + LayerMask.LayerToName(hitboxObj.layer) +
+                      "\nIs Trigger: " + circle.isTrigger);
         }
 
         AttackHitbox hitbox = hitboxObj.GetComponent<AttackHitbox>();
         float finalDamage = WeaponManager.Instance.CalculateFinalDamage(attackData.damage);
         hitbox.Initialize(finalDamage, attackData.attackName);
+
+        Debug.Log("Hitbox initialized with damage: " + finalDamage);
 
         StartCoroutine(ReturnHitboxDelayed(hitboxObj, attackData.hitboxShape, attackData.hitboxDuration));
     }
@@ -496,6 +555,80 @@ public class AttackController : MonoBehaviour
         if (hitbox != null && HitboxPool.Instance != null)
         {
             HitboxPool.Instance.Return(hitbox, shape);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (attacks != null && attacks.Count > 1)
+        {
+            AttackData previewAttack = attacks[1];
+
+            float directionMultiplier = transform.localScale.x < 0 ? -1f : 1f;
+
+            // 다단계 히트박스 미리보기
+            if (previewAttack.useMultiPhaseHitbox && previewAttack.hitboxPhases != null)
+            {
+                Color[] phaseColors = new Color[]
+                {
+                    new Color(0f, 1f, 0f, 0.3f),    // 초록
+                    new Color(1f, 0.5f, 0f, 0.3f),  // 주황
+                    new Color(1f, 0f, 1f, 0.3f)     // 보라
+                };
+
+                for (int i = 0; i < previewAttack.hitboxPhases.Length; i++)
+                {
+                    HitboxPhase phase = previewAttack.hitboxPhases[i];
+
+                    Vector2 offset = new Vector2(
+                        phase.offset.x * directionMultiplier,
+                        phase.offset.y
+                    );
+                    Vector2 hitboxPos = (Vector2)transform.position + offset;
+
+                    Gizmos.color = phaseColors[i % phaseColors.Length];
+
+                    if (phase.shape == HitboxShape.Box)
+                    {
+                        Gizmos.DrawCube(hitboxPos, phase.size);
+                        Gizmos.color = Color.Lerp(phaseColors[i % phaseColors.Length], Color.white, 0.5f);
+                        Gizmos.DrawWireCube(hitboxPos, phase.size);
+                    }
+                    else
+                    {
+                        Gizmos.DrawSphere(hitboxPos, phase.radius);
+                        Gizmos.color = Color.Lerp(phaseColors[i % phaseColors.Length], Color.white, 0.5f);
+                        Gizmos.DrawWireSphere(hitboxPos, phase.radius);
+                    }
+                }
+            }
+            else
+            {
+                // 기존 단일 히트박스 미리보기
+                Vector2 offset = new Vector2(
+                    previewAttack.hitboxOffset.x * directionMultiplier,
+                    previewAttack.hitboxOffset.y
+                );
+
+                Vector2 hitboxPos = (Vector2)transform.position + offset;
+
+                Gizmos.color = new Color(0f, 1f, 0f, 0.3f);
+                if (previewAttack.hitboxShape == HitboxShape.Box)
+                {
+                    Gizmos.DrawCube(hitboxPos, previewAttack.hitboxSize);
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawWireCube(hitboxPos, previewAttack.hitboxSize);
+                }
+                else
+                {
+                    Gizmos.DrawSphere(hitboxPos, previewAttack.hitboxSize.x);
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawWireSphere(hitboxPos, previewAttack.hitboxSize.x);
+                }
+            }
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, 0.2f);
         }
     }
 }

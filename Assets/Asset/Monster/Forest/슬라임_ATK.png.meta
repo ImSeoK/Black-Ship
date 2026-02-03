@@ -1,70 +1,49 @@
 fileFormatVersion: 2
-guid: 2bf4c9801fc4fc047b62597bc6211b5d
+guid: 1f1e4140344757e459cca736699ed32d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8280064083711762762
-    second: SpearATK_0
+      213: 292967838989389597
+    second: "\uC2AC\uB77C\uC784_ATK_0"
   - first:
-      213: 329554185046459424
-    second: SpearATK_1
+      213: -9188541246304737796
+    second: "\uC2AC\uB77C\uC784_ATK_1"
   - first:
-      213: 2723383459429746430
-    second: SpearATK_2
+      213: 7535869603469619351
+    second: "\uC2AC\uB77C\uC784_ATK_2"
   - first:
-      213: 9064274448602719579
-    second: SpearATK_3
+      213: 2661466243066969689
+    second: "\uC2AC\uB77C\uC784_ATK_3"
   - first:
-      213: -6882672066718172264
-    second: SpearATK_4
+      213: -2507686979031384708
+    second: "\uC2AC\uB77C\uC784_ATK_4"
   - first:
-      213: 2116231973857243745
-    second: SpearATK_5
+      213: 1671817073136682097
+    second: "\uC2AC\uB77C\uC784_ATK_5"
   - first:
-      213: 6500240104368533239
-    second: SpearATK_6
+      213: -5700775048502621402
+    second: "\uC2AC\uB77C\uC784_ATK_6"
   - first:
-      213: -4386858269887640614
-    second: SpearATK_7
+      213: 7665705469952658552
+    second: "\uC2AC\uB77C\uC784_ATK_7"
   - first:
-      213: -8597186163735670441
-    second: SpearATK_8
+      213: -1012823646202991423
+    second: "\uC2AC\uB77C\uC784_ATK_8"
   - first:
-      213: -1536979484394620595
-    second: SpearATK_9
+      213: 4902331380792594808
+    second: "\uC2AC\uB77C\uC784_ATK_9"
   - first:
-      213: -3984639213132543298
-    second: SpearATK_10
+      213: 2611247661715269309
+    second: "\uC2AC\uB77C\uC784_ATK_10"
   - first:
-      213: -6629961766974275082
-    second: SpearATK_11
+      213: 2582991770174113809
+    second: "\uC2AC\uB77C\uC784_ATK_11"
   - first:
-      213: 2780041961904167782
-    second: SpearATK_12
+      213: -2101259151606925314
+    second: "\uC2AC\uB77C\uC784_ATK_12"
   - first:
-      213: 1756693927643758614
-    second: SpearATK_13
-  - first:
-      213: 5797417438611000445
-    second: SpearATK_14
-  - first:
-      213: 167537864986589782
-    second: SpearATK_15
-  - first:
-      213: -4057767461492033856
-    second: SpearATK_16
-  - first:
-      213: -2497972917018755005
-    second: SpearATK_17
-  - first:
-      213: 1762765227555663291
-    second: SpearATK_18
-  - first:
-      213: 4714602872889546520
-    second: SpearATK_19
-  - first:
-      213: -3563945805518864305
-    second: SpearATK_20
+      213: -4703311194811398796
+    second: "\uC2AC\uB77C\uC784_ATK_13"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -111,7 +90,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -132,7 +111,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 8192
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -160,331 +139,265 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SpearATK_0
+      name: "\uC2AC\uB77C\uC784_ATK_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a412c1b1a62b8e270800000000000000
-      internalID: 8280064083711762762
+      spriteID: d1f839582b4d01400800000000000000
+      internalID: 292967838989389597
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_1
+      name: "\uC2AC\uB77C\uC784_ATK_1"
       rect:
         serializedVersion: 2
-        x: 350
+        x: 100
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 02400f509cfc29400800000000000000
-      internalID: 329554185046459424
+      spriteID: cf52bf16b6ebb7080800000000000000
+      internalID: -9188541246304737796
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_2
+      name: "\uC2AC\uB77C\uC784_ATK_2"
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 0
+        width: 100
+        height: 100
+      alignment: 9
+      pivot: {x: 0.77, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79078744a79c49860800000000000000
+      internalID: 7535869603469619351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC2AC\uB77C\uC784_ATK_3"
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 0
+        width: 100
+        height: 100
+      alignment: 9
+      pivot: {x: 0.77, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95e33bf627d6fe420800000000000000
+      internalID: 2661466243066969689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC2AC\uB77C\uC784_ATK_4"
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 0
+        width: 100
+        height: 100
+      alignment: 9
+      pivot: {x: 0.77, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7d36f69af7e23dd0800000000000000
+      internalID: -2507686979031384708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC2AC\uB77C\uC784_ATK_5"
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 0
+        width: 100
+        height: 100
+      alignment: 9
+      pivot: {x: 0.77, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 174ceb535cc733710800000000000000
+      internalID: 1671817073136682097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC2AC\uB77C\uC784_ATK_6"
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 0
+        width: 100
+        height: 100
+      alignment: 9
+      pivot: {x: 0.77, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62b47912c47c2e0b0800000000000000
+      internalID: -5700775048502621402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC2AC\uB77C\uC784_ATK_7"
       rect:
         serializedVersion: 2
         x: 700
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ef60c76c3d66bc520800000000000000
-      internalID: 2723383459429746430
+      spriteID: 87c0c41a28e026a60800000000000000
+      internalID: 7665705469952658552
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_3
+      name: "\uC2AC\uB77C\uC784_ATK_8"
       rect:
         serializedVersion: 2
-        x: 1050
+        x: 800
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b556d9f1695cacd70800000000000000
-      internalID: 9064274448602719579
+      spriteID: 1cc64fb824ab1f1f0800000000000000
+      internalID: -1012823646202991423
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_4
+      name: "\uC2AC\uB77C\uC784_ATK_9"
       rect:
         serializedVersion: 2
-        x: 1400
+        x: 900
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 89b72c5a836db70a0800000000000000
-      internalID: -6882672066718172264
+      spriteID: 871946bca64980440800000000000000
+      internalID: 4902331380792594808
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_5
+      name: "\uC2AC\uB77C\uC784_ATK_10"
       rect:
         serializedVersion: 2
-        x: 1750
+        x: 1000
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 162b51894cd5e5d10800000000000000
-      internalID: 2116231973857243745
+      spriteID: db6ab11d9e30d3420800000000000000
+      internalID: 2611247661715269309
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SpearATK_6
+      name: "\uC2AC\uB77C\uC784_ATK_11"
       rect:
         serializedVersion: 2
-        x: 2100
+        x: 1100
         y: 0
-        width: 350
-        height: 200
+        width: 100
+        height: 100
       alignment: 9
-      pivot: {x: 0.165, y: 0}
+      pivot: {x: 0.77, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7fe62a76fed753a50800000000000000
-      internalID: 6500240104368533239
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_7
-      rect:
-        serializedVersion: 2
-        x: 2450
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: adbcc5765afbe13c0800000000000000
-      internalID: -4386858269887640614
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_8
-      rect:
-        serializedVersion: 2
-        x: 2800
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 751d1a2ebb8a0b880800000000000000
-      internalID: -8597186163735670441
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_9
-      rect:
-        serializedVersion: 2
-        x: 3150
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d49789d5d4d8baae0800000000000000
-      internalID: -1536979484394620595
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_10
-      rect:
-        serializedVersion: 2
-        x: 3500
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: eba84274fb7b3b8c0800000000000000
-      internalID: -3984639213132543298
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_11
-      rect:
-        serializedVersion: 2
-        x: 3850
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6f1c31566e4adf3a0800000000000000
-      internalID: -6629961766974275082
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_12
-      rect:
-        serializedVersion: 2
-        x: 4200
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 66b5aff5f61b49620800000000000000
-      internalID: 2780041961904167782
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_13
-      rect:
-        serializedVersion: 2
-        x: 4550
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 610ca40e1d7016810800000000000000
-      internalID: 1756693927643758614
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SpearATK_14
-      rect:
-        serializedVersion: 2
-        x: 4900
-        y: 0
-        width: 350
-        height: 200
-      alignment: 9
-      pivot: {x: 0.165, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d7c4013c170947050800000000000000
-      internalID: 5797417438611000445
+      spriteID: 1184cf66451a8d320800000000000000
+      internalID: 2582991770174113809
       vertices: []
       indices: 
       edges: []
@@ -493,7 +406,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 61dd20faafa90004a90f24541f81b9c9
+    spriteID: 977f8c3677d4e8f4fbfcb7c43b6de043
     internalID: 0
     vertices: []
     indices: 
@@ -503,21 +416,18 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SpearATK_0: 8280064083711762762
-      SpearATK_1: 329554185046459424
-      SpearATK_10: -3984639213132543298
-      SpearATK_11: -6629961766974275082
-      SpearATK_12: 2780041961904167782
-      SpearATK_13: 1756693927643758614
-      SpearATK_14: 5797417438611000445
-      SpearATK_2: 2723383459429746430
-      SpearATK_3: 9064274448602719579
-      SpearATK_4: -6882672066718172264
-      SpearATK_5: 2116231973857243745
-      SpearATK_6: 6500240104368533239
-      SpearATK_7: -4386858269887640614
-      SpearATK_8: -8597186163735670441
-      SpearATK_9: -1536979484394620595
+      "\uC2AC\uB77C\uC784_ATK_0": 292967838989389597
+      "\uC2AC\uB77C\uC784_ATK_1": -9188541246304737796
+      "\uC2AC\uB77C\uC784_ATK_10": 2611247661715269309
+      "\uC2AC\uB77C\uC784_ATK_11": 2582991770174113809
+      "\uC2AC\uB77C\uC784_ATK_2": 7535869603469619351
+      "\uC2AC\uB77C\uC784_ATK_3": 2661466243066969689
+      "\uC2AC\uB77C\uC784_ATK_4": -2507686979031384708
+      "\uC2AC\uB77C\uC784_ATK_5": 1671817073136682097
+      "\uC2AC\uB77C\uC784_ATK_6": -5700775048502621402
+      "\uC2AC\uB77C\uC784_ATK_7": 7665705469952658552
+      "\uC2AC\uB77C\uC784_ATK_8": -1012823646202991423
+      "\uC2AC\uB77C\uC784_ATK_9": 4902331380792594808
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

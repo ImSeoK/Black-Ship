@@ -7,9 +7,6 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private Vector3 offset = new Vector3(0, 0, -10);
 
-    [Header("Debug (Read Only)")]
-    [SerializeField] private Vector3 tempOffset = Vector3.zero;
-
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -34,19 +31,10 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        if (target == null)
-        {
-            FindPlayer();
-            if (target == null) return;
-        }
+        if (target == null) return;
 
-        Vector3 desiredPosition = target.position + offset + tempOffset;
-
-        // 로그 추가 (tempOffset이 있을 때만)
-        if (tempOffset.magnitude > 0.01f)
-        {
-            Debug.Log("LateUpdate - target: " + target.position + ", tempOffset: " + tempOffset + ", desired: " + desiredPosition);
-        }
+        Vector3 desiredPosition = target.position + offset;
+        desiredPosition.z = transform.position.z;
 
         transform.position = desiredPosition;
     }
@@ -63,20 +51,5 @@ public class CameraFollow : MonoBehaviour
         {
             Debug.LogWarning("CameraFollow: Player not found!");
         }
-    }
-
-    public void SetTempOffset(Vector3 newOffset)
-    {
-        tempOffset = newOffset;
-    }
-
-    public void AddTempOffset(Vector3 additionalOffset)
-    {
-        tempOffset += additionalOffset;
-    }
-
-    public void ResetTempOffset()
-    {
-        tempOffset = Vector3.zero;
     }
 }

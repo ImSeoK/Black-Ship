@@ -1,13 +1,16 @@
 fileFormatVersion: 2
-guid: 9b5b918ecbba60c408b9f2669ab9a1d6
+guid: 8d7f0d30094e2ed4da9f4762f20ec771
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5512721175205409606
-    second: Slime_Move_0
+      213: -4685826020005821022
+    second: "\uC2AC\uB77C\uC784_MOVE_0"
   - first:
-      213: -3742991318533782717
-    second: Slime_Move_1
+      213: 8943048132503199073
+    second: "\uC2AC\uB77C\uC784_MOVE_1"
+  - first:
+      213: -7136711601851531158
+    second: "\uC2AC\uB77C\uC784_MOVE_2"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,13 +106,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Slime_Move_0
+      name: "\uC2AC\uB77C\uC784_MOVE_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 65
-        height: 47
+        width: 100
+        height: 100
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -118,20 +121,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 64374e183be118c40800000000000000
-      internalID: 5512721175205409606
+      spriteID: 2a54546bf0a98feb0800000000000000
+      internalID: -4685826020005821022
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Slime_Move_1
+      name: "\uC2AC\uB77C\uC784_MOVE_1"
       rect:
         serializedVersion: 2
-        x: 65
+        x: 100
         y: 0
-        width: 65
-        height: 47
+        width: 100
+        height: 100
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +143,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3434c6d1a393e0cc0800000000000000
-      internalID: -3742991318533782717
+      spriteID: 16dd21be4e61c1c70800000000000000
+      internalID: 8943048132503199073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC2AC\uB77C\uC784_MOVE_2"
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 0
+        width: 100
+        height: 100
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a600b3b2c9e45fc90800000000000000
+      internalID: -7136711601851531158
       vertices: []
       indices: 
       edges: []
@@ -150,7 +175,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5a7a247e1fa73da428bc9e1994c92c32
+    spriteID: 74d458a8f28da3b49a40616b7af5d6f3
     internalID: 0
     vertices: []
     indices: 
@@ -160,8 +185,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Slime_Move_0: 5512721175205409606
-      Slime_Move_1: -3742991318533782717
+      "\uC2AC\uB77C\uC784_MOVE_0": -4685826020005821022
+      "\uC2AC\uB77C\uC784_MOVE_1": 8943048132503199073
+      "\uC2AC\uB77C\uC784_MOVE_2": -7136711601851531158
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

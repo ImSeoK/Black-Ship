@@ -19,11 +19,14 @@ MonoBehaviour:
   animationTrigger: Attack
   animationDuration: 0.5
   timingMode: 1
+  useMultiPhaseHitbox: 0
+  allowMovementDuringAttack: 1
   hitboxShape: 0
-  hitboxOffset: {x: 0, y: 0}
-  hitboxSize: {x: 0, y: 0}
+  hitboxOffset: {x: 1.5, y: 1}
+  hitboxSize: {x: 2, y: 2}
   hitboxActiveTime: 0.1
   hitboxDuration: 0.15
+  hitboxPhases: []
   hasEffect: 0
   effectPrefab: {fileID: 0}
   effectOffset: {x: 0, y: 0}
@@ -32,3 +35,5 @@ MonoBehaviour:
   isDashSkill: 0
   dashDistance: 5
   checkObstacles: 1
+  shiftsPosition: 0
+  positionShift: {x: 0, y: 0}
