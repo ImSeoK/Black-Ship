@@ -17,7 +17,7 @@ MonoBehaviour:
   damage: 20
   cooldown: 0.5
   animationTrigger: SpearATK2
-  animationDuration: 1.15
+  animationDuration: 1.25
   timingMode: 1
   useMultiPhaseHitbox: 1
   allowMovementDuringAttack: 0
@@ -28,17 +28,17 @@ MonoBehaviour:
   hitboxDuration: 0
   hitboxPhases:
   - activeTime: 0
-    duration: 0.1
+    duration: 0.3
     shape: 0
-    offset: {x: 2.5, y: 1}
+    offset: {x: 1, y: 1}
     size: {x: 2, y: 3}
     radius: 0
     damageMultiplier: 1
   - activeTime: 0
-    duration: 0.15
+    duration: 0.3
     shape: 0
-    offset: {x: 7, y: 1}
-    size: {x: 3, y: 4}
+    offset: {x: 1, y: 1}
+    size: {x: 3, y: 3}
     radius: 0
     damageMultiplier: 2
   hasEffect: 0
@@ -50,4 +50,4 @@ MonoBehaviour:
   dashDistance: 5
   checkObstacles: 1
   shiftsPosition: 1
-  positionShift: {x: 7, y: 0}
+  moveSpeedPerFrame: 0.5

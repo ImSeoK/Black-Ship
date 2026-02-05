@@ -284,34 +284,30 @@ public class AttackController : MonoBehaviour
     IEnumerator MoveCameraWithSkill(AttackData attackData)
     {
         float direction = transform.localScale.x < 0 ? -1f : 1f;
-
-        float totalDistance = attackData.positionShift.x * direction;
         float movePerFrame = attackData.moveSpeedPerFrame * direction;
-
         float duration = attackData.animationDuration;
         float elapsed = 0f;
+        Vector2 startPos = transform.position;
+        int frameCount = 0;
 
-        float movedDistance = 0f;
+        // 첫 프레임 대기 (애니메이션 시작 대기)
+        yield return null;
+        frameCount++;
+        elapsed += Time.deltaTime;
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            // 매 프레임 일정하게 이동
+            Vector2 movement = new Vector2(movePerFrame, 0);
+            transform.position = (Vector2)transform.position + movement;
 
-            // 목표 거리 도달 안 했으면 이동
-            if (Mathf.Abs(movedDistance) < Mathf.Abs(totalDistance))
+            frameCount++;
+
+            // 5프레임마다 로그
+            if (frameCount % 5 == 0)
             {
-                Vector2 movement = new Vector2(movePerFrame, 0);
-                transform.position = (Vector2)transform.position + movement;
-
-                movedDistance += movePerFrame;
-
-                // 목표 거리 초과 방지
-                if (Mathf.Abs(movedDistance) > Mathf.Abs(totalDistance))
-                {
-                    float overshoot = Mathf.Abs(movedDistance) - Mathf.Abs(totalDistance);
-                    transform.position = (Vector2)transform.position - new Vector2(overshoot * direction, 0);
-                    movedDistance = totalDistance;
-                }
+                float movedDistance = ((Vector2)transform.position - startPos).x;
+                Debug.Log($"Frame {frameCount}: Elapsed {elapsed:F2}s, Moved {movedDistance:F2}");
             }
 
             if (rb != null)
@@ -320,11 +316,14 @@ public class AttackController : MonoBehaviour
             }
 
             yield return null;
+            elapsed += Time.deltaTime;
         }
 
-        // 이동 완료, 추가 처리 없음
-        pendingPositionShift = Vector2.zero;
+        Vector2 endPos = transform.position;
+        float totalMoved = (endPos - startPos).x;
+        Debug.Log($"=== Skill End === Total Frames: {frameCount}, Total Distance: {totalMoved:F2}");
     }
+
 
     void CreatePathHitbox(Vector2 startPos, Vector2 endPos, float duration)
     {

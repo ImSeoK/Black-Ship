@@ -202,13 +202,35 @@ public class Monster : MonoBehaviour
                 {
                     animator.SetTrigger("Attack");
                 }
-
                 lastAttackTime = Time.time;
             }
         }
         else
         {
             ChangeState(MonsterState.Chase);
+        }
+    }
+
+    // ===== Animation Event로 호출됨 =====
+    public void OnAttackDamage()
+    {
+        DealDamageToPlayer();
+    }
+    // ===================================
+
+    void DealDamageToPlayer()
+    {
+        if (player == null) return;
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance <= attackRange)
+        {
+            if (StatsManager.Instance != null)
+            {
+                StatsManager.Instance.TakeDamage(attackDamage);
+                Debug.Log($"{monsterName} attacked player for {attackDamage} damage!");
+            }
         }
     }
 

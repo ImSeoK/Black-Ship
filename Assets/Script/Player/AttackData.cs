@@ -63,7 +63,6 @@ public class AttackData : ScriptableObject
 
     [Header("Position Shift (Non-Dash Skills)")]
     public bool shiftsPosition = false;
-    public Vector2 positionShift = Vector2.zero;
     public float moveSpeedPerFrame = 0.3f;
 
     public HitboxPhase GetHitboxPhase(int index)

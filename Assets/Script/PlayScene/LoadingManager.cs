@@ -53,13 +53,10 @@ public class LoadingManager : MonoBehaviour
     {
         isLoading = true;
 
-        // 게임 일시정지
         Time.timeScale = 0f;
 
-        Debug.Log($"LoadingManager: '{spawnPointName}' 저장 시작"); // 추가
         PlayerPrefs.SetString("LastSpawnPoint", spawnPointName);
-        PlayerPrefs.Save(); // 추가 - 강제 저장
-        Debug.Log($"저장 완료. 확인: {PlayerPrefs.GetString("LastSpawnPoint", "없음")}"); // 추가
+        PlayerPrefs.Save();
 
         if (loadingPanel != null)
         {
@@ -77,7 +74,7 @@ public class LoadingManager : MonoBehaviour
             yield return null;
         }
 
-        // 카메라 셋업 대기 (unscaledTime 사용)
+        // 카메라 셋업 대기
         yield return StartCoroutine(WaitForRealSeconds(1f));
 
         // 페이드 인
@@ -88,7 +85,6 @@ public class LoadingManager : MonoBehaviour
             loadingPanel.SetActive(false);
         }
 
-        // 게임 재개
         Time.timeScale = 1f;
 
         isLoading = false;

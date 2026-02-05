@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class StatsManager : MonoBehaviour
@@ -9,10 +10,10 @@ public class StatsManager : MonoBehaviour
     public bool forestCutscenePlayed = false;
 
     [Header("아이 상태")]
-    public bool babyPickedUp = false;      // 아이 주웠는지
-    public bool carryingBaby = false;      // 현재 들고 있는지
-    public string babySceneName = "";      // 아이 놓은 씬
-    public Vector3 babyPosition;           // 아이 놓은 위치
+    public bool babyPickedUp = false;
+    public bool carryingBaby = false;
+    public string babySceneName = "";
+    public Vector3 babyPosition;
 
     [Header("아이 데이터")]
     public BabyData babyData = new BabyData();
@@ -22,8 +23,17 @@ public class StatsManager : MonoBehaviour
     public KeyCode statsKey = KeyCode.Q;
 
     [Header("Player Stats")]
+    public float maxHP = 100f;
     public float playerHP = 100f;
     public float playerStamina = 100f;
+
+    [Header("Combat Settings")]
+    public float invincibilityTime = 1f;
+    private float lastDamageTime = -999f;
+
+    [Header("HP UI")]
+    public Slider hpSlider;
+    public Image hpFillImage;
 
     [Header("UI Text References")]
     public TextMeshProUGUI hpText;
@@ -59,6 +69,20 @@ public class StatsManager : MonoBehaviour
             statsPanel.SetActive(false);
         }
         isStatsOpen = false;
+
+        // PlayerUI DontDestroyOnLoad
+        GameObject playerUI = GameObject.Find("PlayerUI");
+        if (playerUI != null)
+        {
+            DontDestroyOnLoad(playerUI);
+            Debug.Log("PlayerUI set to DontDestroyOnLoad");
+        }
+        else
+        {
+            Debug.LogWarning("PlayerUI not found!");
+        }
+
+        UpdateHPUI();
     }
 
     void Update()
@@ -93,7 +117,7 @@ public class StatsManager : MonoBehaviour
     {
         if (hpText != null)
         {
-            hpText.text = $"HP: {playerHP:F0} / 100";
+            hpText.text = $"HP: {playerHP:F0} / {maxHP:F0}";
         }
 
         if (staminaText != null)
@@ -102,9 +126,57 @@ public class StatsManager : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        if (Time.time < lastDamageTime + invincibilityTime)
+        {
+            Debug.Log("Player is invincible!");
+            return;
+        }
+
+        playerHP -= damage;
+        lastDamageTime = Time.time;
+
+        Debug.Log($"Player took {damage} damage! HP: {playerHP}/{maxHP}");
+
+        if (playerHP <= 0)
+        {
+            playerHP = 0;
+            Die();
+        }
+
+        UpdateHPUI();
+    }
+
+    void Die()
+    {
+        Debug.Log("Player died!");
+    }
+
+    void UpdateHPUI()
+    {
+        if (hpSlider != null)
+        {
+            hpSlider.value = playerHP / maxHP;
+        }
+
+        if (hpFillImage != null)
+        {
+            float hpPercent = playerHP / maxHP;
+
+            if (hpPercent > 0.6f)
+                hpFillImage.color = Color.green;
+            else if (hpPercent > 0.3f)
+                hpFillImage.color = Color.yellow;
+            else
+                hpFillImage.color = Color.red;
+        }
+    }
+
     public void SetHP(float value)
     {
-        playerHP = Mathf.Clamp(value, 0, 100);
+        playerHP = Mathf.Clamp(value, 0, maxHP);
+        UpdateHPUI();
     }
 
     public void SetStamina(float value)
@@ -114,7 +186,8 @@ public class StatsManager : MonoBehaviour
 
     public void AddHP(float value)
     {
-        playerHP = Mathf.Clamp(playerHP + value, 0, 100);
+        playerHP = Mathf.Clamp(playerHP + value, 0, maxHP);
+        UpdateHPUI();
     }
 
     public void AddStamina(float value)
@@ -122,25 +195,21 @@ public class StatsManager : MonoBehaviour
         playerStamina = Mathf.Clamp(playerStamina + value, 0, 100);
     }
 
-    // ===== 아이 관련 메서드 =====
-
     public void PickUpBaby(bool carryImmediately = false)
     {
         babyPickedUp = true;
-        carryingBaby = carryImmediately; // false면 들고 다니지 않음
+        carryingBaby = carryImmediately;
 
-        // 아이 초기 데이터
-        babyData.babyName = "주운 아기";
+        babyData.babyName = "주워 아기";
         babyData.age = 0;
         babyData.health = 100;
         babyData.hunger = 50;
         babyData.happiness = 80;
 
-        // BaseCamp의 특정 위치에 두기
         if (!carryImmediately)
         {
             babySceneName = "BaseCamp";
-            babyPosition = new Vector3(3.5f, -1.5f, 0f); // 요람/침대 위치로 변경
+            babyPosition = new Vector3(3.5f, -1.5f, 0f);
         }
 
         SaveState();
@@ -161,8 +230,6 @@ public class StatsManager : MonoBehaviour
         SaveState();
     }
 
-    // ===== 저장/불러오기 =====
-
     public void LoadState()
     {
         forestCutscenePlayed = PlayerPrefs.GetInt("ForestCutscenePlayed", 0) == 1;
@@ -174,7 +241,6 @@ public class StatsManager : MonoBehaviour
         babyPosition.y = PlayerPrefs.GetFloat("BabyPosY", 0);
         babyPosition.z = PlayerPrefs.GetFloat("BabyPosZ", 0);
 
-        // 아이 데이터
         babyData.babyName = PlayerPrefs.GetString("BabyName", "아기");
         babyData.age = PlayerPrefs.GetInt("BabyAge", 0);
         babyData.health = PlayerPrefs.GetInt("BabyHealth", 100);
@@ -193,7 +259,6 @@ public class StatsManager : MonoBehaviour
         PlayerPrefs.SetFloat("BabyPosY", babyPosition.y);
         PlayerPrefs.SetFloat("BabyPosZ", babyPosition.z);
 
-        // 아이 데이터
         PlayerPrefs.SetString("BabyName", babyData.babyName);
         PlayerPrefs.SetInt("BabyAge", babyData.age);
         PlayerPrefs.SetInt("BabyHealth", babyData.health);
