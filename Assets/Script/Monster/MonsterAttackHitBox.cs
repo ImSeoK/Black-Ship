@@ -3,35 +3,70 @@ using UnityEngine;
 public class MonsterAttackHitbox : MonoBehaviour
 {
     private Monster monster;
+    private BoxCollider2D hitboxCollider;
+    private bool hasDealtDamage = false;
 
     void Awake()
     {
         monster = GetComponentInParent<Monster>();
-
-        // 시작 시 비활성화
-        gameObject.SetActive(false);
+        hitboxCollider = GetComponent<BoxCollider2D>();
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    // Start() 삭제! Pool에서 이미 비활성화됨
+
+    void OnEnable()
     {
-        // Player만 공격
-        if (other.CompareTag("Player"))
+        hasDealtDamage = false;
+        CheckOverlap();
+    }
+
+    void CheckOverlap()
+    {
+        if (hitboxCollider == null || hasDealtDamage) return;
+
+        Collider2D[] hits = Physics2D.OverlapBoxAll(
+            hitboxCollider.bounds.center,
+            hitboxCollider.bounds.size,
+            0f
+        );
+
+        foreach (var hit in hits)
         {
-            if (StatsManager.Instance != null && monster != null)
+            if (hit.CompareTag("Player") && !hasDealtDamage)
             {
-                StatsManager.Instance.TakeDamage(monster.attackDamage);
-                Debug.Log($"{monster.monsterName} hit player for {monster.attackDamage} damage!");
+                DealDamage(hit);
+                return;
             }
         }
     }
 
-    // Gizmo로 Hitbox 영역 표시
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (hasDealtDamage) return;
+
+        if (other.CompareTag("Player"))
+        {
+            DealDamage(other);
+        }
+    }
+
+    void DealDamage(Collider2D playerCollider)
+    {
+        if (hasDealtDamage) return;
+
+        if (StatsManager.Instance != null && monster != null)
+        {
+            StatsManager.Instance.TakeDamage(monster.attackDamage);
+            hasDealtDamage = true;
+        }
+    }
+
     void OnDrawGizmos()
     {
         BoxCollider2D box = GetComponent<BoxCollider2D>();
         if (box != null)
         {
-            Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f); // 주황색
+            Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.DrawCube(box.offset, box.size);
 

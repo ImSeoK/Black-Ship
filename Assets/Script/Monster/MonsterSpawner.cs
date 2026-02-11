@@ -47,9 +47,6 @@ public class MonsterSpawner : MonoBehaviour
             SpawnMonster();
             spawnTimer = 0f;
         }
-
-        // 디버그
-        Debug.Log("Active: " + activeMonsters.Count + "/" + maxMonsters);
     }
 
     void InitializePool()
@@ -73,8 +70,6 @@ public class MonsterSpawner : MonoBehaviour
 
                 monsterPools[monsterName].Enqueue(monster);
             }
-
-            Debug.Log("Initialized pool for " + monsterName + ": " + spawnData.poolSize);
         }
     }
 
@@ -113,7 +108,6 @@ public class MonsterSpawner : MonoBehaviour
 
             activeMonsters.Add(monster);
 
-            Debug.Log("Spawned " + monster.monsterName + " at " + spawnPos);
         }
         else
         {
@@ -128,11 +122,8 @@ public class MonsterSpawner : MonoBehaviour
         if (monsterPools.ContainsKey(monsterName) && monsterPools[monsterName].Count > 0)
         {
             Monster monster = monsterPools[monsterName].Dequeue();
-            Debug.Log("Got " + monsterName + " from pool. Remaining: " + monsterPools[monsterName].Count);
             return monster;
         }
-
-        Debug.LogWarning("Pool empty for " + monsterName + "! Cannot spawn.");
         return null; // ← 풀 비면 null 반환 (새로 생성 안 함!)
     }
 
@@ -148,7 +139,6 @@ public class MonsterSpawner : MonoBehaviour
         if (monsterPools.ContainsKey(monsterName))
         {
             monsterPools[monsterName].Enqueue(monster);
-            Debug.Log("Returned " + monsterName + " to pool. Pool size: " + monsterPools[monsterName].Count);
         }
     }
 

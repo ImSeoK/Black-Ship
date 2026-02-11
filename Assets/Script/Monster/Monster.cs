@@ -14,6 +14,7 @@ public class Monster : MonoBehaviour
 {
     [Header("Attack Hitbox")]
     public GameObject attackHitbox;
+    public Vector3 hitboxBaseOffset = new Vector3(0.5f, 0f, 0f);
 
     [Header("Monster Info")]
     public string monsterName = "Slime";
@@ -74,20 +75,41 @@ public class Monster : MonoBehaviour
         }
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        Debug.Log("InitializeComponents: SpriteRenderer=" + (spriteRenderer != null) +
-                  ", Animator=" + (animator != null) +
-                  ", RB=" + (rb != null));
     }
 
     public void OnSpawn()
     {
+        Debug.Log($"=== OnSpawn: {monsterName} ===");
+        Debug.Log($"AttackHitbox before check: {attackHitbox != null}");
+
         // 컴포넌트 null이면 재초기화
         if (spriteRenderer == null || animator == null || rb == null)
         {
             Debug.LogWarning("Components null! Re-initializing...");
             InitializeComponents();
         }
+
+        // AttackHitbox 참조 확인!
+        if (attackHitbox == null)
+        {
+            Debug.LogWarning($"{monsterName}: AttackHitbox is NULL! Searching...");
+            Transform hitboxTransform = transform.Find("AttackHitbox");
+            if (hitboxTransform != null)
+            {
+                attackHitbox = hitboxTransform.gameObject;
+                Debug.Log($"{monsterName}: AttackHitbox found and assigned!");
+            }
+            else
+            {
+                Debug.LogError($"{monsterName}: AttackHitbox NOT FOUND in children!");
+            }
+        }
+        else
+        {
+            Debug.Log($"{monsterName}: AttackHitbox already assigned!");
+        }
+
+        Debug.Log($"AttackHitbox after check: {attackHitbox != null}");
 
         currentHealth = maxHealth;
         isDead = false;
@@ -96,13 +118,6 @@ public class Monster : MonoBehaviour
         {
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
         }
-
-        Debug.Log("=== OnSpawn ===" +
-                  "\nMonster: " + monsterName +
-                  "\nHP: " + currentHealth +
-                  "\nRB: " + (rb != null) +
-                  "\nAnimator: " + (animator != null) +
-                  "\nPlayer: " + (player != null));
 
         ChangeState(MonsterState.Idle);
     }
@@ -134,14 +149,13 @@ public class Monster : MonoBehaviour
     {
         if (player == null) return;
 
-        // Collider 중심 기준으로 거리 계산
         Collider2D monsterCol = GetComponent<Collider2D>();
         Collider2D playerCol = player.GetComponent<Collider2D>();
 
-        Vector2 monsterCenter = monsterCol != null ? monsterCol.bounds.center : transform.position;
-        Vector2 playerCenter = playerCol != null ? playerCol.bounds.center : player.position;
+        if (monsterCol == null || playerCol == null) return;
 
-        float distanceToPlayer = Vector2.Distance(monsterCenter, playerCenter);
+        // Collider 간 최단거리 계산
+        float distanceToPlayer = monsterCol.Distance(playerCol).distance;
 
         if (distanceToPlayer <= attackRange)
         {
@@ -192,8 +206,13 @@ public class Monster : MonoBehaviour
     {
         if (attackHitbox != null)
         {
+            float directionX = spriteRenderer.flipX ? hitboxBaseOffset.x : -hitboxBaseOffset.x;
+            Vector3 targetPos = new Vector3(directionX, hitboxBaseOffset.y, hitboxBaseOffset.z);
+            attackHitbox.transform.localPosition = targetPos;
+
             attackHitbox.SetActive(true);
-            Debug.Log($"{monsterName} Hitbox Activated");
+
+            Debug.Log($"[{Time.time:F2}] {monsterName} ACTIVATE Hitbox");
         }
     }
 
@@ -202,7 +221,7 @@ public class Monster : MonoBehaviour
         if (attackHitbox != null)
         {
             attackHitbox.SetActive(false);
-            Debug.Log($"{monsterName} Hitbox Deactivated");
+            Debug.Log($"[{Time.time:F2}] {monsterName} DEACTIVATE Hitbox");
         }
     }
 
@@ -220,14 +239,12 @@ public class Monster : MonoBehaviour
     {
         rb.linearVelocity = Vector2.zero;
 
-        // Collider 중심 기준
         Collider2D monsterCol = GetComponent<Collider2D>();
         Collider2D playerCol = player.GetComponent<Collider2D>();
 
-        Vector2 monsterCenter = monsterCol != null ? monsterCol.bounds.center : transform.position;
-        Vector2 playerCenter = playerCol != null ? playerCol.bounds.center : player.position;
+        if (monsterCol == null || playerCol == null) return;
 
-        float distanceToPlayer = Vector2.Distance(monsterCenter, playerCenter);
+        float distanceToPlayer = monsterCol.Distance(playerCol).distance;
 
         if (distanceToPlayer <= attackRange)
         {
@@ -256,13 +273,8 @@ public class Monster : MonoBehaviour
 
         currentHealth -= damage;
 
-        Debug.Log(">>> HIT: " + monsterName +
-                  " took " + damage + " damage. HP: " +
-                  currentHealth + "/" + maxHealth);
-
         if (currentHealth <= 0)
         {
-            Debug.Log(">>> DYING: " + monsterName + " HP reached 0!");
             Die();
         }
     }
@@ -309,16 +321,36 @@ public class Monster : MonoBehaviour
         switch (newState)
         {
             case MonsterState.Idle:
-                if (rb != null) // null 체크 추가!
+                if (rb != null)
                 {
                     rb.linearVelocity = Vector2.zero;
+                    rb.bodyType = RigidbodyType2D.Kinematic; // 추가!
                 }
                 wanderTimer = wanderWaitTime;
                 break;
 
             case MonsterState.Wander:
+                if (rb != null)
+                {
+                    rb.bodyType = RigidbodyType2D.Dynamic; // 추가!
+                }
                 Vector2 randomDirection = Random.insideUnitCircle.normalized;
                 wanderTarget = (Vector2)transform.position + randomDirection * wanderDistance;
+                break;
+
+            case MonsterState.Chase:
+                if (rb != null)
+                {
+                    rb.bodyType = RigidbodyType2D.Dynamic; // 추가!
+                }
+                break;
+
+            case MonsterState.Attack:
+                if (rb != null)
+                {
+                    rb.linearVelocity = Vector2.zero;
+                    rb.bodyType = RigidbodyType2D.Kinematic; // 추가!
+                }
                 break;
         }
     }
