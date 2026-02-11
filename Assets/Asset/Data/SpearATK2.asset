@@ -50,4 +50,4 @@ MonoBehaviour:
   dashDistance: 5
   checkObstacles: 1
   shiftsPosition: 1
-  moveSpeedPerFrame: 0.5
+  moveSpeedPerFrame: 0.4

@@ -23,10 +23,7 @@ public class MonsterSpawner : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
+
     }
 
     void Start()
@@ -162,8 +159,9 @@ public class MonsterSpawner : MonoBehaviour
 
         do
         {
-            float x = Random.Range(spawnAreaMin.x, spawnAreaMax.x);
-            float y = Random.Range(spawnAreaMin.y, spawnAreaMax.y);
+            // 스포너 위치 기준으로 상대 좌표 계산
+            float x = Random.Range(spawnAreaMin.x, spawnAreaMax.x) + transform.position.x;
+            float y = Random.Range(spawnAreaMin.y, spawnAreaMax.y) + transform.position.y;
             spawnPos = new Vector2(x, y);
             attempts++;
 
@@ -177,8 +175,11 @@ public class MonsterSpawner : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Vector2 center = (spawnAreaMin + spawnAreaMax) / 2f;
+
+        // 스포너 위치 기준으로 박스 그리기
+        Vector2 center = (spawnAreaMin + spawnAreaMax) / 2f + (Vector2)transform.position;
         Vector2 size = spawnAreaMax - spawnAreaMin;
+
         Gizmos.DrawWireCube(center, size);
     }
 }

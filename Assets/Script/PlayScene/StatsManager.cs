@@ -8,6 +8,7 @@ public class StatsManager : MonoBehaviour
 
     [Header("ÄÆ¾À »óÅÂ")]
     public bool forestCutscenePlayed = false;
+    public bool openingCutscenePlayed = false;
 
     [Header("¾ÆÀÌ »óÅÂ")]
     public bool babyPickedUp = false;

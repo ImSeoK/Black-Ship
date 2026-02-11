@@ -12,6 +12,9 @@ public enum MonsterState
 
 public class Monster : MonoBehaviour
 {
+    [Header("Attack Hitbox")]
+    public GameObject attackHitbox;
+
     [Header("Monster Info")]
     public string monsterName = "Slime";
     public Sprite sprite;
@@ -131,7 +134,14 @@ public class Monster : MonoBehaviour
     {
         if (player == null) return;
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        // Collider 중심 기준으로 거리 계산
+        Collider2D monsterCol = GetComponent<Collider2D>();
+        Collider2D playerCol = player.GetComponent<Collider2D>();
+
+        Vector2 monsterCenter = monsterCol != null ? monsterCol.bounds.center : transform.position;
+        Vector2 playerCenter = playerCol != null ? playerCol.bounds.center : player.position;
+
+        float distanceToPlayer = Vector2.Distance(monsterCenter, playerCenter);
 
         if (distanceToPlayer <= attackRange)
         {
@@ -178,6 +188,24 @@ public class Monster : MonoBehaviour
         }
     }
 
+    public void ActivateHitbox()
+    {
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(true);
+            Debug.Log($"{monsterName} Hitbox Activated");
+        }
+    }
+
+    public void DeactivateHitbox()
+    {
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(false);
+            Debug.Log($"{monsterName} Hitbox Deactivated");
+        }
+    }
+
     void ChaseBehavior()
     {
         if (player == null) return;
@@ -192,7 +220,14 @@ public class Monster : MonoBehaviour
     {
         rb.linearVelocity = Vector2.zero;
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        // Collider 중심 기준
+        Collider2D monsterCol = GetComponent<Collider2D>();
+        Collider2D playerCol = player.GetComponent<Collider2D>();
+
+        Vector2 monsterCenter = monsterCol != null ? monsterCol.bounds.center : transform.position;
+        Vector2 playerCenter = playerCol != null ? playerCol.bounds.center : player.position;
+
+        float distanceToPlayer = Vector2.Distance(monsterCenter, playerCenter);
 
         if (distanceToPlayer <= attackRange)
         {
@@ -208,29 +243,6 @@ public class Monster : MonoBehaviour
         else
         {
             ChangeState(MonsterState.Chase);
-        }
-    }
-
-    // ===== Animation Event로 호출됨 =====
-    public void OnAttackDamage()
-    {
-        DealDamageToPlayer();
-    }
-    // ===================================
-
-    void DealDamageToPlayer()
-    {
-        if (player == null) return;
-
-        float distance = Vector2.Distance(transform.position, player.position);
-
-        if (distance <= attackRange)
-        {
-            if (StatsManager.Instance != null)
-            {
-                StatsManager.Instance.TakeDamage(attackDamage);
-                Debug.Log($"{monsterName} attacked player for {attackDamage} damage!");
-            }
         }
     }
 
