@@ -341,6 +341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackHitbox: {fileID: 8007587311930593831}
+  hitboxBaseOffset: {x: 0.5, y: 0, z: 0}
   monsterName: Dog
   sprite: {fileID: -4546811166403501839, guid: 4257354b997b9fb488cca34a8c2ecc46, type: 3}
   animatorController: {fileID: 0}
@@ -348,7 +349,7 @@ MonoBehaviour:
   moveSpeed: 2
   chaseSpeed: 4
   attackDamage: 10
-  detectionRange: 6
+  detectionRange: 5
   attackRange: 2
   chaseGiveUpRange: 15
   attackCooldown: 2

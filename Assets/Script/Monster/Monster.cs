@@ -48,10 +48,14 @@ public class Monster : MonoBehaviour
     private MonsterState state;
     private float currentHealth;
     private bool isDead = false;
+    private bool isAttacking = false;
 
     private float lastAttackTime = 0f;
     private float wanderTimer = 0f;
     private Vector2 wanderTarget;
+
+    private float currentChaseSpeed;
+    private Vector2 chaseOffset;
 
     void Start()
     {
@@ -82,14 +86,12 @@ public class Monster : MonoBehaviour
         Debug.Log($"=== OnSpawn: {monsterName} ===");
         Debug.Log($"AttackHitbox before check: {attackHitbox != null}");
 
-        // 컴포넌트 null이면 재초기화
         if (spriteRenderer == null || animator == null || rb == null)
         {
             Debug.LogWarning("Components null! Re-initializing...");
             InitializeComponents();
         }
 
-        // AttackHitbox 참조 확인!
         if (attackHitbox == null)
         {
             Debug.LogWarning($"{monsterName}: AttackHitbox is NULL! Searching...");
@@ -113,6 +115,10 @@ public class Monster : MonoBehaviour
 
         currentHealth = maxHealth;
         isDead = false;
+
+        // 추가! 속도 차이 + 위치 오프셋
+        currentChaseSpeed = chaseSpeed * Random.Range(0.8f, 1.2f);
+        chaseOffset = Random.insideUnitCircle * 0.5f;
 
         if (player == null)
         {
@@ -156,6 +162,8 @@ public class Monster : MonoBehaviour
 
         // Collider 간 최단거리 계산
         float distanceToPlayer = monsterCol.Distance(playerCol).distance;
+
+        if(isAttacking) return;
 
         if (distanceToPlayer <= attackRange)
         {
@@ -211,8 +219,6 @@ public class Monster : MonoBehaviour
             attackHitbox.transform.localPosition = targetPos;
 
             attackHitbox.SetActive(true);
-
-            Debug.Log($"[{Time.time:F2}] {monsterName} ACTIVATE Hitbox");
         }
     }
 
@@ -221,16 +227,36 @@ public class Monster : MonoBehaviour
         if (attackHitbox != null)
         {
             attackHitbox.SetActive(false);
-            Debug.Log($"[{Time.time:F2}] {monsterName} DEACTIVATE Hitbox");
         }
+
+        // 공격 끝!
+        isAttacking = false;
     }
 
     void ChaseBehavior()
     {
         if (player == null) return;
 
-        Vector2 direction = (player.position - transform.position).normalized;
-        rb.linearVelocity = direction * chaseSpeed;
+        Collider2D monsterCol = GetComponent<Collider2D>();
+        Collider2D playerCol = player.GetComponent<Collider2D>();
+
+        if (monsterCol == null || playerCol == null) return;
+
+        float distanceToPlayer = monsterCol.Distance(playerCol).distance;
+
+        // 가까우면 정확히 Player, 멀면 offset 적용
+        Vector2 targetPos;
+        if (distanceToPlayer > attackRange + 1f)
+        {
+            targetPos = (Vector2)player.position + chaseOffset;
+        }
+        else
+        {
+            targetPos = player.position;
+        }
+
+        Vector2 direction = (targetPos - (Vector2)transform.position).normalized;
+        rb.linearVelocity = direction * currentChaseSpeed;
 
         FlipSprite(direction.x);
     }
@@ -253,13 +279,18 @@ public class Monster : MonoBehaviour
                 if (animator != null)
                 {
                     animator.SetTrigger("Attack");
+                    isAttacking = true;  // 공격 시작!
                 }
                 lastAttackTime = Time.time;
             }
         }
         else
         {
-            ChangeState(MonsterState.Chase);
+            // 공격 중이면 상태 전환 금지!
+            if (!isAttacking)
+            {
+                ChangeState(MonsterState.Chase);
+            }
         }
     }
 
@@ -324,16 +355,30 @@ public class Monster : MonoBehaviour
                 if (rb != null)
                 {
                     rb.linearVelocity = Vector2.zero;
-                    rb.bodyType = RigidbodyType2D.Kinematic; // 추가!
+                    rb.bodyType = RigidbodyType2D.Kinematic;
                 }
+
+                // Animator 파라미터 설정
+                if (animator != null)
+                {
+                    animator.SetBool("IsMoving", false);
+                }
+
                 wanderTimer = wanderWaitTime;
                 break;
 
             case MonsterState.Wander:
                 if (rb != null)
                 {
-                    rb.bodyType = RigidbodyType2D.Dynamic; // 추가!
+                    rb.bodyType = RigidbodyType2D.Dynamic;
                 }
+
+                // Animator 파라미터 설정
+                if (animator != null)
+                {
+                    animator.SetBool("IsMoving", true);
+                }
+
                 Vector2 randomDirection = Random.insideUnitCircle.normalized;
                 wanderTarget = (Vector2)transform.position + randomDirection * wanderDistance;
                 break;
@@ -341,7 +386,13 @@ public class Monster : MonoBehaviour
             case MonsterState.Chase:
                 if (rb != null)
                 {
-                    rb.bodyType = RigidbodyType2D.Dynamic; // 추가!
+                    rb.bodyType = RigidbodyType2D.Dynamic;
+                }
+
+                // Animator 파라미터 설정
+                if (animator != null)
+                {
+                    animator.SetBool("IsMoving", true);
                 }
                 break;
 
@@ -349,7 +400,13 @@ public class Monster : MonoBehaviour
                 if (rb != null)
                 {
                     rb.linearVelocity = Vector2.zero;
-                    rb.bodyType = RigidbodyType2D.Kinematic; // 추가!
+                    rb.bodyType = RigidbodyType2D.Kinematic;
+                }
+
+                // Animator 파라미터 설정
+                if (animator != null)
+                {
+                    animator.SetBool("IsMoving", false);
                 }
                 break;
         }
