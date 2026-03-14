@@ -2548,6 +2548,7 @@ GameObject:
   - component: {fileID: 527587890}
   - component: {fileID: 527587889}
   - component: {fileID: 527587888}
+  - component: {fileID: 527587892}
   - component: {fileID: 527587891}
   m_Layer: 0
   m_Name: CM_StartShelter
@@ -2642,9 +2643,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 527587887}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d658ffa745d058e4eb7eca346ad9debb, type: 3}
+  m_Script: {fileID: 11500000, guid: b9ec63dacb8da1c4784681c1e21a28d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &527587892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527587887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &627499484
 GameObject:
   m_ObjectHideFlags: 0
@@ -10188,6 +10213,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2088990314}
+  - {fileID: 527587890}
   - {fileID: 2061955238}
   - {fileID: 644559891}
   - {fileID: 1279695565}
@@ -10201,6 +10227,5 @@ SceneRoots:
   - {fileID: 1573998577}
   - {fileID: 109061137}
   - {fileID: 1972002003}
-  - {fileID: 527587890}
   - {fileID: 1829615647}
   - {fileID: 851418833}

@@ -2,28 +2,37 @@ using UnityEngine;
 
 public class BabyCarryController : MonoBehaviour
 {
-    [Header("아이 스프라이트")]
+    [Header("아기 스프라이트")]
     public GameObject babySprite;
 
     [Header("키 설정")]
-    public KeyCode putDownKey = KeyCode.R; // Q → R로 변경
+    public KeyCode putDownKey = KeyCode.R;
 
     void Update()
     {
-        // 아이 스프라이트 표시/숨김
+        // 유아기일 때만 스프라이트 표시
         if (babySprite != null)
         {
-            babySprite.SetActive(StatsManager.Instance != null &&
-                                 StatsManager.Instance.carryingBaby);
+            babySprite.SetActive(
+                BabyManager.Instance != null &&
+                BabyManager.Instance.carryingBaby &&
+                BabyManager.Instance.IsInfant()
+            );
         }
 
-        // R키로 아이 내려놓기
+        if (BabyManager.Instance == null || !BabyManager.Instance.carryingBaby) return;
+
         if (Input.GetKeyDown(putDownKey))
         {
-            if (StatsManager.Instance != null &&
-                StatsManager.Instance.carryingBaby)
+            if (BabyManager.Instance.IsInfant())
             {
+                // 유아기 - 그냥 내려놓기
                 PutDownBaby();
+            }
+            else
+            {
+                // 이후 시기 - 두고가기 선택지
+                ShowLeaveChoiceUI();
             }
         }
     }
@@ -33,23 +42,52 @@ public class BabyCarryController : MonoBehaviour
         Vector3 dropPosition = transform.position;
         string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-        StatsManager.Instance.PutDownBaby(dropPosition, currentScene);
-
-        // 즉시 BabyOnGround 활성화
+        BabyManager.Instance.PutDownBaby(dropPosition, currentScene);
         ActivateBabyOnGround();
 
-        Debug.Log($"아이를 {currentScene}에 두었습니다!");
+        Debug.Log($"아기를 {currentScene}에 내려놓았습니다!");
+    }
+
+    void ShowLeaveChoiceUI()
+    {
+        // 유아기 이후 - 데려가기/두고가기 선택
+        if (ChoiceUI.Instance != null)
+        {
+            ChoiceUI.Instance.ShowChoice(
+                transform,
+                "두고가기",
+                "취소",
+                OnLeave,
+                OnCancel
+            );
+        }
+    }
+
+    void OnLeave()
+    {
+        // 두고가기 선택 시 - 현재 씬에 배치
+        Vector3 dropPosition = transform.position;
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+        BabyManager.Instance.PutDownBaby(dropPosition, currentScene);
+        ActivateBabyOnGround();
+
+        Debug.Log($"아기를 {currentScene}에 두고 갑니다.");
+    }
+
+    void OnCancel()
+    {
+        Debug.Log("취소했습니다.");
     }
 
     void ActivateBabyOnGround()
     {
-        // FindFirstObjectByType로 변경
         BabyOnGround babyOnGround = FindFirstObjectByType<BabyOnGround>(FindObjectsInactive.Include);
 
         if (babyOnGround != null)
         {
             babyOnGround.gameObject.SetActive(true);
-            babyOnGround.transform.position = StatsManager.Instance.babyPosition;
+            babyOnGround.transform.position = BabyManager.Instance.babyPosition;
         }
     }
 }

@@ -81,12 +81,12 @@ public class PlayerMovement : MonoBehaviour
         {
             bool isMoving = moveInput.magnitude > 0 && !isRolling;
             animator.SetBool("isMoving", isMoving);
-            animator.SetBool("IsRolling", isRolling);
+            //animator.SetBool("IsRolling", isRolling);
 
             float baseSpeed = isRunning ? runSpeed : moveSpeed;
 
             float speedModifier = 1f;
-            if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
+            if (BabyManager.Instance != null && BabyManager.Instance.carryingBaby)
             {
                 speedModifier = 0.7f;
             }
@@ -129,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
             float baseSpeed = isRunning ? runSpeed : moveSpeed;
 
             float speedModifier = 1f;
-            if (StatsManager.Instance != null && StatsManager.Instance.carryingBaby)
+            if (BabyManager.Instance != null && BabyManager.Instance.carryingBaby)
             {
                 speedModifier = 0.7f;
             }

@@ -9,7 +9,6 @@ public class ConditionalObject : MonoBehaviour
         ForestCutscenePlayed
     }
 
-    [Header("조건 설정")]
     public ConditionType condition;
     public bool showWhenTrue = false;
 
@@ -20,31 +19,23 @@ public class ConditionalObject : MonoBehaviour
 
     void CheckCondition()
     {
-        if (StatsManager.Instance == null) return;
-
         bool conditionMet = false;
 
         switch (condition)
         {
             case ConditionType.BabyPickedUp:
-                conditionMet = StatsManager.Instance.babyPickedUp;
+                if (BabyManager.Instance != null)
+                    conditionMet = BabyManager.Instance.babyPickedUp;
                 break;
             case ConditionType.CarryingBaby:
-                conditionMet = StatsManager.Instance.carryingBaby;
+                if (BabyManager.Instance != null)
+                    conditionMet = BabyManager.Instance.carryingBaby;
                 break;
             case ConditionType.ForestCutscenePlayed:
-                conditionMet = StatsManager.Instance.forestCutscenePlayed;
+                conditionMet = PlayerPrefs.GetInt("Cutscene_ForestCutscene", 0) == 1;
                 break;
         }
 
-        // 조건에 따라 활성화/비활성화
-        if (showWhenTrue)
-        {
-            gameObject.SetActive(conditionMet);
-        }
-        else
-        {
-            gameObject.SetActive(!conditionMet);
-        }
+        gameObject.SetActive(showWhenTrue ? conditionMet : !conditionMet);
     }
 }

@@ -9,19 +9,16 @@ public class BabyOnGround : MonoBehaviour
 
     void Update()
     {
-        // babyPickedUp이고 carryingBaby가 false일 때만 활성화
-        bool shouldBeActive = StatsManager.Instance.babyPickedUp &&
-                             !StatsManager.Instance.carryingBaby &&
-                             StatsManager.Instance.babySceneName == UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        // BabyManager로 교체
+        bool shouldBeActive = BabyManager.Instance.IsBabyInCurrentScene();
 
         gameObject.SetActive(shouldBeActive);
 
         if (shouldBeActive)
         {
-            transform.position = StatsManager.Instance.babyPosition;
+            transform.position = BabyManager.Instance.babyPosition;
         }
 
-        // E키 입력 감지
         if (playerNearby && Input.GetKeyDown(interactKey))
         {
             ShowChoiceUI();
@@ -33,7 +30,6 @@ public class BabyOnGround : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerNearby = true;
-            // 상호작용 UI 표시 (옵션)
         }
     }
 
@@ -42,7 +38,6 @@ public class BabyOnGround : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerNearby = false;
-            // 상호작용 UI 숨김 (옵션)
         }
     }
 
@@ -52,22 +47,22 @@ public class BabyOnGround : MonoBehaviour
         {
             ChoiceUI.Instance.ShowChoice(
                 transform,
-                "들기", // Yes 텍스트
-                "취소", // No 텍스트
-                OnPickUp, // Yes 액션
-                OnCancel  // No 액션
+                "예",
+                "아니",
+                OnPickUp,
+                OnCancel
             );
         }
     }
 
     void OnPickUp()
     {
-        Debug.Log("아이를 들었습니다!");
+        Debug.Log("아기를 들었습니다!");
 
-        if (StatsManager.Instance != null)
+        // StatsManager → BabyManager로 교체
+        if (BabyManager.Instance != null)
         {
-            StatsManager.Instance.carryingBaby = true;
-            StatsManager.Instance.SaveState();
+            BabyManager.Instance.CarryBaby();
         }
 
         gameObject.SetActive(false);
@@ -76,6 +71,5 @@ public class BabyOnGround : MonoBehaviour
     void OnCancel()
     {
         Debug.Log("취소했습니다.");
-        // 아무것도 안 함
     }
 }

@@ -1,50 +1,36 @@
 using UnityEngine;
-using System.Collections;
+using Unity.Cinemachine;
 
 public class CameraShake : MonoBehaviour
 {
     public static CameraShake Instance;
 
-    private bool isShaking = false;
+    private CinemachineImpulseSource impulseSource;
 
     void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
+
+        impulseSource = GetComponent<CinemachineImpulseSource>();
+
+        if (impulseSource == null)
+            Debug.LogWarning("[CameraShake] CinemachineImpulseSource 없음");
     }
 
     public void Shake(float duration, float magnitude)
     {
-        if (!isShaking)
-        {
-            StartCoroutine(ShakeCoroutine(duration, magnitude));
-        }
-    }
+        if (impulseSource == null) return;
+        impulseSource.ImpulseDefinition.ImpulseDuration = duration;
 
-    IEnumerator ShakeCoroutine(float duration, float magnitude)
-    {
-        isShaking = true;
-        Vector3 originalPosition = transform.localPosition;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            float x = Random.Range(-1f, 1f) * magnitude;
-            float y = Random.Range(-1f, 1f) * magnitude;
-
-            transform.localPosition = originalPosition + new Vector3(x, y, 0f);
-
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        transform.localPosition = originalPosition;
-        isShaking = false;
+        // 랜덤 방향으로 흔들림
+        Vector3 randomVelocity = new Vector3(
+            Random.Range(-1f, 1f) * magnitude,
+            Random.Range(-1f, 1f) * magnitude,
+            0f
+        );
+        impulseSource.GenerateImpulse(randomVelocity);
     }
 }

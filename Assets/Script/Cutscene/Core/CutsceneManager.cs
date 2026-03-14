@@ -1,171 +1,115 @@
 using UnityEngine;
 using UnityEngine.Playables;
+using System.Collections;
 
 public class CutsceneManager : MonoBehaviour
 {
-    [Header("재생 설정")]
-    public PlayableDirector timeline;
-    public string cutsceneID = "OpeningCutscene";
+    public static CutsceneManager Instance;
 
-    [Header("옵션")]
-    public bool playOnStart = true;
+    [Header("컷씬 설정")]
+    public PlayableDirector director;
+    public string cutsceneID;
     public bool playOnce = true;
+    public bool playOnStart = false;
 
-    private bool hasPlayed = false;
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
         if (playOnStart)
-        {
-            PlayCutscene();
-        }
+            StartCoroutine(PlayNextFrame());
     }
 
-    public void PlayCutscene()
+    IEnumerator PlayNextFrame()
     {
-        if (hasPlayed) return;
-        if (timeline == null)
+        yield return null;
+        Play(director, cutsceneID, playOnce);
+    }
+
+    public void Play(PlayableDirector targetDirector, string id, bool once)
+    {
+        if (targetDirector == null)
         {
-            Debug.LogWarning($"[{cutsceneID}] Timeline이 할당되지 않았습니다.");
+            Debug.LogWarning($"[CutsceneManager] {id} - Director 없음");
             return;
         }
 
-        if (playOnce && HasPlayedBefore())
+        if (once && HasPlayed(id))
         {
-            Debug.Log($"[{cutsceneID}] 이미 재생됨 - 스킵");
-            gameObject.SetActive(false);
+            Debug.Log($"[CutsceneManager] {id} 스킵");
             return;
         }
 
-        hasPlayed = true;
-        StartCutscene();
+        StartCutscene(targetDirector, id, once);
     }
 
-    void StartCutscene()
+    void StartCutscene(PlayableDirector targetDirector, string id, bool once)
     {
-        DisablePlayerControl();
-        Time.timeScale = 0f;
-
-        timeline.Play();
-        timeline.stopped += OnCutsceneFinished;
+        DisablePlayer();
+        targetDirector.Play();
+        targetDirector.stopped += (d) => OnFinished(d, id, once);
     }
 
-    void OnCutsceneFinished(PlayableDirector director)
+    void OnFinished(PlayableDirector d, string id, bool once)
     {
-        EnablePlayerControl();
-        Time.timeScale = 1f;
-
-        // 컷씬 카메라 Priority 초기화 (수정!)
-        ResetCutsceneCameras();
-
-        if (playOnce)
-        {
-            MarkAsPlayed();
-        }
-
-        director.stopped -= OnCutsceneFinished;
+        EnablePlayer();
+        ResetCutsceneCameras(d);
+        if (once) MarkPlayed(id);
+        d.stopped -= (dir) => OnFinished(dir, id, once);
     }
 
-    void ResetCutsceneCameras()
+    bool HasPlayed(string id)
     {
-        // Reflection 사용해서 타입 찾기
-        var cams = GetComponentsInChildren<Component>();
-        foreach (var cam in cams)
-        {
-            if (cam.GetType().Name == "CinemachineCamera")
-            {
-                var priorityField = cam.GetType().GetProperty("Priority");
-                if (priorityField != null)
-                {
-                    var priority = priorityField.GetValue(cam);
-                    var valueField = priority.GetType().GetProperty("Value");
-                    if (valueField != null)
-                    {
-                        valueField.SetValue(priority, 0);
-                    }
-                }
-            }
-        }
+        return PlayerPrefs.GetInt($"Cutscene_{id}", 0) == 1;
     }
 
-    void DisablePlayerControl()
+    void MarkPlayed(string id)
+    {
+        PlayerPrefs.SetInt($"Cutscene_{id}", 1);
+        PlayerPrefs.Save();
+    }
+
+    void DisablePlayer()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
-        MonoBehaviour[] scripts = player.GetComponents<MonoBehaviour>();
-        foreach (var script in scripts)
-        {
+        foreach (var script in player.GetComponents<MonoBehaviour>())
             script.enabled = false;
-        }
 
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
         if (rb != null) rb.linearVelocity = Vector2.zero;
-
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            CameraFollow cameraFollow = mainCamera.GetComponent<CameraFollow>();
-            if (cameraFollow != null) cameraFollow.enabled = false;
-        }
     }
 
-    void EnablePlayerControl()
+    void EnablePlayer()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
-        MonoBehaviour[] scripts = player.GetComponents<MonoBehaviour>();
-        foreach (var script in scripts)
-        {
+        foreach (var script in player.GetComponents<MonoBehaviour>())
             script.enabled = true;
-        }
-
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            CameraFollow cameraFollow = mainCamera.GetComponent<CameraFollow>();
-            if (cameraFollow != null) cameraFollow.enabled = true;
-        }
     }
 
-    bool HasPlayedBefore()
+    void ResetCutsceneCameras(PlayableDirector d)
     {
-        if (StatsManager.Instance == null) return false;
-
-        switch (cutsceneID)
+        foreach (var cam in d.GetComponentsInChildren<Component>())
         {
-            case "OpeningCutscene":
-                return StatsManager.Instance.openingCutscenePlayed;
-            case "ForestCutscene":
-                return StatsManager.Instance.forestCutscenePlayed;
-            default:
-                return false;
-        }
-    }
-
-    void MarkAsPlayed()
-    {
-        if (StatsManager.Instance == null) return;
-
-        switch (cutsceneID)
-        {
-            case "OpeningCutscene":
-                StatsManager.Instance.openingCutscenePlayed = true;
-                break;
-            case "ForestCutscene":
-                StatsManager.Instance.forestCutscenePlayed = true;
-                break;
-        }
-
-        StatsManager.Instance.SaveState();
-    }
-
-    void OnDestroy()
-    {
-        if (timeline != null)
-        {
-            timeline.stopped -= OnCutsceneFinished;
+            if (cam.GetType().Name != "CinemachineCamera") continue;
+            var prop = cam.GetType().GetProperty("Priority");
+            if (prop == null) continue;
+            var priority = prop.GetValue(cam);
+            priority?.GetType().GetProperty("Value")?.SetValue(priority, 0);
         }
     }
 }

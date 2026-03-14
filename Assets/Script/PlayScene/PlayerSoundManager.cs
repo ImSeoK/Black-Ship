@@ -49,8 +49,6 @@ public class PlayerSoundManager : MonoBehaviour
 {
     RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f);
     
-    Debug.Log($"Raycast: {hit.collider != null}");
-    
     if (hit.collider != null)
     {
         Debug.Log($"Hit: {hit.collider.name}");
