@@ -4,58 +4,57 @@ using TMPro;
 
 public class SimpleWeaponSelector : MonoBehaviour
 {
-    [Header("¹«±â µ¥ÀÌÅÍ")]
-    public WeaponData[] weaponDataList;
-
     [Header("UI")]
-    public Button[] weaponButtons; // ¸ğµç ¹«±â ¹öÆ° ¹è¿­
+    public Button[] weaponButtons;
     public TextMeshProUGUI weaponNameText;
     public TextMeshProUGUI descriptionText;
 
+    private WeaponData[] weaponList;
     private WeaponData selectedWeapon;
 
     void Start()
     {
-        // °¢ ¹öÆ°¿¡ ÀÌº¥Æ® µî·Ï
+        // WeaponManagerë¥¼ ë‹¨ì¼ ì†ŒìŠ¤ë¡œ ì‚¬ìš©
+        if (WeaponManager.Instance == null || WeaponManager.Instance.allWeapons == null)
+        {
+#if UNITY_EDITOR
+            Debug.LogError("WeaponManager ë˜ëŠ” allWeaponsê°€ ì—†ìŠµë‹ˆë‹¤!");
+#endif
+            return;
+        }
+
+        weaponList = WeaponManager.Instance.allWeapons;
+
         for (int i = 0; i < weaponButtons.Length; i++)
         {
-            if (i < weaponDataList.Length)
+            if (i < weaponList.Length)
             {
-                int index = i; // Å¬·ÎÀú ¹®Á¦ ÇØ°á
+                int index = i;
                 weaponButtons[i].onClick.AddListener(() => OnWeaponButtonClick(index));
             }
         }
 
-        // ±âº» ¼±ÅÃ (Ã¹ ¹øÂ° ¹«±â)
-        if (weaponDataList.Length > 0)
-        {
+        if (weaponList.Length > 0)
             ShowWeaponInfo(0);
-        }
     }
 
     void OnWeaponButtonClick(int index)
     {
-        // ¹«±â Á¤º¸ Ç¥½Ã
         ShowWeaponInfo(index);
-
-        // ¼±ÅÃ ¿Ï·á
         ConfirmSelection();
     }
 
     void ShowWeaponInfo(int index)
     {
-        selectedWeapon = weaponDataList[index];
+        selectedWeapon = weaponList[index];
 
         if (selectedWeapon != null)
         {
-            // UI ¾÷µ¥ÀÌÆ®
             if (weaponNameText != null)
                 weaponNameText.text = selectedWeapon.weaponName;
 
             if (descriptionText != null)
                 descriptionText.text = selectedWeapon.description;
-
-            Debug.Log($"{selectedWeapon.weaponName} Á¤º¸ Ç¥½Ã");
         }
     }
 
@@ -63,26 +62,15 @@ public class SimpleWeaponSelector : MonoBehaviour
     {
         if (selectedWeapon == null) return;
 
-        Debug.Log($"{selectedWeapon.weaponName} ¼±ÅÃ!");
-
-        // Ä¿¼­ ¹Ì¸®º¸±â
         if (CursorManager.Instance != null)
-        {
             CursorManager.Instance.SetWeaponCursor(selectedWeapon.weaponType);
-        }
 
-        // PlayerPrefs¿¡ ÀúÀå
         PlayerPrefs.SetInt("SelectedWeapon", (int)selectedWeapon.weaponType);
         PlayerPrefs.Save();
 
-        // BaseCamp·Î ÀÌµ¿
         if (LoadingManager.Instance != null)
-        {
             LoadingManager.Instance.LoadScene("BaseCamp", "DefaultSpawn");
-        }
         else
-        {
             UnityEngine.SceneManagement.SceneManager.LoadScene("BaseCamp");
-        }
     }
 }

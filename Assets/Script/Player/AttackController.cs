@@ -22,12 +22,17 @@ public class AttackController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
+    private HitboxSpawner hitboxSpawner;
+    private EffectSpawner effectSpawner;
+
     private bool isAttacking = false;
     private bool hasWeapon = false;
     private Dictionary<AttackData, float> lastAttackTimes = new Dictionary<AttackData, float>();
 
     private AttackData currentAttack;
-    private Vector2 pendingPositionShift = Vector2.zero;
+    private Dictionary<AttackData, int> attackTriggerHashes = new Dictionary<AttackData, int>();
+
+    private float DirectionMultiplier => transform.localScale.x < 0 ? -1f : 1f;
 
     void Awake()
     {
@@ -47,8 +52,14 @@ public class AttackController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
 
+        hitboxSpawner = GetComponent<HitboxSpawner>();
+        effectSpawner = GetComponent<EffectSpawner>();
+
         if (hitboxParent == null) hitboxParent = transform;
         if (effectParent == null) effectParent = transform;
+
+        if (hitboxSpawner != null) hitboxSpawner.hitboxParent = hitboxParent;
+        if (effectSpawner != null) effectSpawner.effectParent = effectParent;
 
         LoadWeaponFromManager();
     }
@@ -72,6 +83,7 @@ public class AttackController : MonoBehaviour
 
         attacks.Clear();
         lastAttackTimes.Clear();
+        attackTriggerHashes.Clear();
 
         foreach (var attack in attackSet.attacks)
         {
@@ -79,17 +91,22 @@ public class AttackController : MonoBehaviour
             {
                 attacks.Add(attack);
                 lastAttackTimes[attack] = -999f;
+                attackTriggerHashes[attack] = Animator.StringToHash(attack.animationTrigger);
 
                 if (!HasAnimationTrigger(attack.animationTrigger))
                 {
+#if UNITY_EDITOR
                     Debug.LogError("Animation trigger missing: " + attack.animationTrigger);
+#endif
                 }
             }
         }
 
         hasWeapon = attacks.Count > 0;
 
+#if UNITY_EDITOR
         Debug.Log("Attack patterns loaded: " + attackSet.weaponType + " (" + attacks.Count + " attacks)");
+#endif
     }
 
     bool HasAnimationTrigger(string triggerName)
@@ -160,7 +177,9 @@ public class AttackController : MonoBehaviour
     {
         if (attackData == null)
         {
+#if UNITY_EDITOR
             Debug.LogError("AttackData is null!");
+#endif
             return;
         }
 
@@ -168,7 +187,9 @@ public class AttackController : MonoBehaviour
 
         if (Time.time < lastAttackTimes[attackData] + cooldown)
         {
+#if UNITY_EDITOR
             Debug.Log(attackData.attackName + " on cooldown! (" + cooldown.ToString("F1") + "s)");
+#endif
             return;
         }
 
@@ -186,9 +207,11 @@ public class AttackController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
         }
 
+#if UNITY_EDITOR
         Debug.Log("[" + attackData.attackName + "] Execute!");
+#endif
 
-        animator.SetTrigger(attackData.animationTrigger);
+        animator.SetTrigger(attackTriggerHashes[attackData]);
 
         if (attackData.isDashSkill)
         {
@@ -257,7 +280,10 @@ public class AttackController : MonoBehaviour
 
         if (attackData.timingMode == TimingMode.Time)
         {
-            CreatePathHitbox(startPos, endPos, attackData.hitboxDuration);
+            if (hitboxSpawner != null)
+                hitboxSpawner.CreatePathHitbox(startPos, endPos, attackData.hitboxDuration, attackData);
+            else
+                CreatePathHitbox(startPos, endPos, attackData.hitboxDuration);
         }
 
         float duration = attackData.animationDuration;
@@ -303,12 +329,14 @@ public class AttackController : MonoBehaviour
 
             frameCount++;
 
+#if UNITY_EDITOR
             // 5프레임마다 로그
             if (frameCount % 5 == 0)
             {
                 float movedDistance = ((Vector2)transform.position - startPos).x;
                 Debug.Log($"Frame {frameCount}: Elapsed {elapsed:F2}s, Moved {movedDistance:F2}");
             }
+#endif
 
             if (rb != null)
             {
@@ -319,9 +347,11 @@ public class AttackController : MonoBehaviour
             elapsed += Time.deltaTime;
         }
 
+#if UNITY_EDITOR
         Vector2 endPos = transform.position;
         float totalMoved = (endPos - startPos).x;
         Debug.Log($"=== Skill End === Total Frames: {frameCount}, Total Distance: {totalMoved:F2}");
+#endif
     }
 
 
@@ -357,7 +387,9 @@ public class AttackController : MonoBehaviour
 
         if (currentAttack.useMultiPhaseHitbox)
         {
+#if UNITY_EDITOR
             Debug.LogWarning("Multi-phase hitbox should use SpawnHitboxPhase(index) instead!");
+#endif
         }
         else
         {
@@ -370,19 +402,25 @@ public class AttackController : MonoBehaviour
     {
         if (currentAttack == null)
         {
+#if UNITY_EDITOR
             Debug.LogError("No current attack!");
+#endif
             return;
         }
 
         if (!currentAttack.useMultiPhaseHitbox)
         {
+#if UNITY_EDITOR
             Debug.LogWarning("Attack is not multi-phase! Use OnAttackHitboxSpawn() instead.");
+#endif
             return;
         }
 
         if (phaseIndex >= currentAttack.GetPhaseCount())
         {
+#if UNITY_EDITOR
             Debug.LogError($"Phase index {phaseIndex} out of range!");
+#endif
             return;
         }
 
@@ -391,11 +429,15 @@ public class AttackController : MonoBehaviour
 
     void SpawnHitboxPhaseNow(AttackData attackData, int phaseIndex)
     {
+#if UNITY_EDITOR
         Debug.Log($"=== SpawnHitboxPhase {phaseIndex} ===");
+#endif
 
         if (HitboxPool.Instance == null)
         {
+#if UNITY_EDITOR
             Debug.LogError("HitboxPool not found!");
+#endif
             return;
         }
 
@@ -418,7 +460,9 @@ public class AttackController : MonoBehaviour
             box.size = phase.size;
             box.offset = Vector2.zero;
 
+#if UNITY_EDITOR
             Debug.Log($"Phase {phaseIndex} Box at {spawnPos}, size: {phase.size}");
+#endif
         }
         else
         {
@@ -426,7 +470,9 @@ public class AttackController : MonoBehaviour
             circle.radius = phase.radius;
             circle.offset = Vector2.zero;
 
+#if UNITY_EDITOR
             Debug.Log($"Phase {phaseIndex} Circle at {spawnPos}, radius: {phase.radius}");
+#endif
         }
 
         float phaseDamage = attackData.damage * phase.damageMultiplier;
@@ -435,7 +481,9 @@ public class AttackController : MonoBehaviour
         AttackHitbox hitbox = hitboxObj.GetComponent<AttackHitbox>();
         hitbox.Initialize(finalDamage, $"{attackData.attackName}_Phase{phaseIndex}");
 
+#if UNITY_EDITOR
         Debug.Log($"Phase {phaseIndex} damage: {finalDamage}");
+#endif
 
         StartCoroutine(ReturnHitboxDelayed(hitboxObj, phase.shape, phase.duration));
     }
@@ -462,11 +510,15 @@ public class AttackController : MonoBehaviour
 
     void SpawnHitboxNow(AttackData attackData)
     {
+#if UNITY_EDITOR
         Debug.Log("=== SpawnHitboxNow called ===");
+#endif
 
         if (HitboxPool.Instance == null)
         {
+#if UNITY_EDITOR
             Debug.LogError("HitboxPool not found!");
+#endif
             return;
         }
 
@@ -487,25 +539,31 @@ public class AttackController : MonoBehaviour
             BoxCollider2D box = hitboxObj.GetComponent<BoxCollider2D>();
             box.size = attackData.hitboxSize;
 
+#if UNITY_EDITOR
             Debug.Log("Hitbox Box created at " + spawnPos + ", size: " + attackData.hitboxSize +
                       "\nLayer: " + LayerMask.LayerToName(hitboxObj.layer) +
                       "\nIs Trigger: " + box.isTrigger);
+#endif
         }
         else
         {
             CircleCollider2D circle = hitboxObj.GetComponent<CircleCollider2D>();
             circle.radius = attackData.hitboxSize.x;
 
+#if UNITY_EDITOR
             Debug.Log("Hitbox Circle created at " + spawnPos + ", radius: " + attackData.hitboxSize.x +
                       "\nLayer: " + LayerMask.LayerToName(hitboxObj.layer) +
                       "\nIs Trigger: " + circle.isTrigger);
+#endif
         }
 
         AttackHitbox hitbox = hitboxObj.GetComponent<AttackHitbox>();
         float finalDamage = WeaponManager.Instance.CalculateFinalDamage(attackData.damage);
         hitbox.Initialize(finalDamage, attackData.attackName);
 
+#if UNITY_EDITOR
         Debug.Log("Hitbox initialized with damage: " + finalDamage);
+#endif
 
         StartCoroutine(ReturnHitboxDelayed(hitboxObj, attackData.hitboxShape, attackData.hitboxDuration));
     }

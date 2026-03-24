@@ -54,9 +54,9 @@ public class MonsterAttackHitbox : MonoBehaviour
     {
         if (hasDealtDamage) return;
 
-        if (StatsManager.Instance != null && monster != null)
+        if (PlayerCombat.Instance != null && monster != null)
         {
-            StatsManager.Instance.TakeDamage(monster.attackDamage);
+            PlayerCombat.Instance.TakeDamage(monster.attackDamage);
             hasDealtDamage = true;
         }
     }

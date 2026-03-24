@@ -2,42 +2,37 @@ using UnityEngine;
 
 public class WeaponInitializer : MonoBehaviour
 {
-    [Header("¹«±â µ¥ÀÌÅÍº£ÀÌ½º")]
-    public WeaponData[] weaponDatabase;
-
     private Animator animator;
 
     void Start()
     {
         animator = GetComponent<Animator>();
 
-        // ÀúÀåµÈ ¹«±â ºÒ·¯¿À±â
         int savedWeapon = PlayerPrefs.GetInt("SelectedWeapon", 0);
         WeaponType weaponType = (WeaponType)savedWeapon;
 
         if (weaponType == WeaponType.None)
         {
-            Debug.LogWarning("¼±ÅÃµÈ ¹«±â°¡ ¾ø½À´Ï´Ù!");
+#if UNITY_EDITOR
+            Debug.LogWarning("ì„ íƒëœ ë¬´ê¸°ê°€ ì—†ìŠµë‹ˆë‹¤!");
+#endif
             return;
         }
 
-        // ¹«±â µ¥ÀÌÅÍ Ã£±â
-        WeaponData weaponData = System.Array.Find(weaponDatabase, w => w.weaponType == weaponType);
-
-        if (weaponData != null)
+        if (WeaponManager.Instance == null)
         {
-            // Animator ±³Ã¼
-            if (weaponData.animatorController != null)
-            {
-                animator.runtimeAnimatorController = weaponData.animatorController;
-            }
-
-            // WeaponManager¿¡ ¼³Á¤
-            WeaponManager weaponManager = GetComponent<WeaponManager>();
-            if (weaponManager != null)
-            {
-                weaponManager.EquipWeapon(weaponType);
-            }
+#if UNITY_EDITOR
+            Debug.LogError("WeaponManager not found!");
+#endif
+            return;
         }
+
+        // WeaponManagerê°€ ë‹¨ì¼ ì†ŒìŠ¤ â€” ì—¬ê¸°ì„œ ì¥ì°©í•˜ë©´ currentWeaponData/currentAttackSet ëª¨ë‘ ì„¤ì •ë¨
+        WeaponManager.Instance.EquipWeapon(weaponType);
+
+        // EquipWeapon ì´í›„ currentWeaponDataì—ì„œ Animator êµì²´
+        RuntimeAnimatorController controller = WeaponManager.Instance.currentWeaponData?.animatorController;
+        if (controller != null)
+            animator.runtimeAnimatorController = controller;
     }
 }
