@@ -25,9 +25,10 @@ public class LoadingManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 
             if (loadingPanel != null && loadingPanel.transform.parent != null)
-            {
                 DontDestroyOnLoad(loadingPanel.transform.root.gameObject);
-            }
+
+            // ì»·ì”¬ í˜ì´ë“œ ìš”ì²­ êµ¬ë… (EffectBehaviourì™€ ê²°í•©ë„ ì œê±°)
+            EffectBehaviour.OnFadeRequested += HandleFadeRequest;
         }
         else
         {
@@ -36,9 +37,17 @@ public class LoadingManager : MonoBehaviour
         }
 
         if (loadingPanel != null)
-        {
             loadingPanel.SetActive(false);
-        }
+    }
+
+    void OnDestroy()
+    {
+        EffectBehaviour.OnFadeRequested -= HandleFadeRequest;
+    }
+
+    void HandleFadeRequest(float from, float to)
+    {
+        StartCoroutine(Fade(from, to));
     }
 
     public void LoadScene(string sceneName, string spawnPointName)
@@ -63,10 +72,10 @@ public class LoadingManager : MonoBehaviour
             loadingPanel.SetActive(true);
         }
 
-        // ÆäÀÌµå ¾Æ¿ô
+        // ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Æ¿ï¿½
         yield return StartCoroutine(Fade(0f, 1f));
 
-        // ¾À ºñµ¿±â ·Îµå
+        // ï¿½ï¿½ ï¿½ñµ¿±ï¿½ ï¿½Îµï¿½
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         while (!asyncLoad.isDone)
@@ -74,10 +83,10 @@ public class LoadingManager : MonoBehaviour
             yield return null;
         }
 
-        // Ä«¸Ş¶ó ¼Â¾÷ ´ë±â
+        // Ä«ï¿½Ş¶ï¿½ ï¿½Â¾ï¿½ ï¿½ï¿½ï¿½
         yield return StartCoroutine(WaitForRealSeconds(1f));
 
-        // ÆäÀÌµå ÀÎ
+        // ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½
         yield return StartCoroutine(Fade(1f, 0f));
 
         if (loadingPanel != null)

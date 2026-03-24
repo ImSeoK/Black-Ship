@@ -16,6 +16,13 @@ public class PlayerStats : MonoBehaviour
     public float maxHunger = 100f;
     public float playerHunger = 100f;
 
+    static class SaveKeys
+    {
+        public const string HP      = "PlayerHP";
+        public const string Stamina = "PlayerStamina";
+        public const string Hunger  = "PlayerHunger";
+    }
+
     void Awake()
     {
         if (Instance == null)
@@ -71,10 +78,25 @@ public class PlayerStats : MonoBehaviour
 
     void OnStatsChanged()
     {
-        PlayerHUD.Instance?.UpdateHUD();
-        InventoryUI.Instance?.OnStatsChanged();
+        StatsChanged?.Invoke();
+        SaveState();
     }
 
-    public void LoadState() { }
-    public void SaveState() { }
+    // PlayerHUD, InventoryUI 등이 직접 참조 대신 이 이벤트를 구독
+    public static event System.Action StatsChanged;
+
+    public void LoadState()
+    {
+        playerHP      = PlayerPrefs.GetFloat(SaveKeys.HP,      maxHP);
+        playerStamina = PlayerPrefs.GetFloat(SaveKeys.Stamina, maxStamina);
+        playerHunger  = PlayerPrefs.GetFloat(SaveKeys.Hunger,  maxHunger);
+    }
+
+    public void SaveState()
+    {
+        PlayerPrefs.SetFloat(SaveKeys.HP,      playerHP);
+        PlayerPrefs.SetFloat(SaveKeys.Stamina, playerStamina);
+        PlayerPrefs.SetFloat(SaveKeys.Hunger,  playerHunger);
+        PlayerPrefs.Save();
+    }
 }

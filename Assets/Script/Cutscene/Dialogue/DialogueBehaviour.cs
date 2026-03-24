@@ -33,6 +33,6 @@ public class DialogueBehaviour : PlayableBehaviour
     {
         if (!Application.isPlaying) return;
         if (CutsceneDialogueUI.Instance != null)
-            CutsceneDialogueUI.Instance.HideDialogue();
+            CutsceneDialogueUI.Instance.SkipToEnd();
     }
 }

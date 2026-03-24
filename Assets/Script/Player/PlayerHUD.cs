@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class PlayerHUD : MonoBehaviour
 {
@@ -18,6 +17,16 @@ public class PlayerHUD : MonoBehaviour
         }
         else
             Destroy(gameObject);
+    }
+
+    void OnEnable()
+    {
+        PlayerStats.StatsChanged += UpdateHUD;
+    }
+
+    void OnDisable()
+    {
+        PlayerStats.StatsChanged -= UpdateHUD;
     }
 
     void Start()

@@ -11,9 +11,6 @@ public class PlayerMovement : MonoBehaviour
     public float rollDuration = 0.3f;
     public float rollCooldown = 1f;
 
-    [Header("Input Settings")]
-    [SerializeField] private KeyCode rollKey = KeyCode.Space;
-
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private Animator animator;
@@ -43,16 +40,10 @@ public class PlayerMovement : MonoBehaviour
         // 구르기 중이 아닐 때만 입력 받기
         if (!isRolling)
         {
-            moveInput.x = 0;
-            moveInput.y = 0;
-            if (Input.GetKey(KeyCode.A)) moveInput.x = -1;
-            if (Input.GetKey(KeyCode.D)) moveInput.x = 1;
-            if (Input.GetKey(KeyCode.W)) moveInput.y = 1;
-            if (Input.GetKey(KeyCode.S)) moveInput.y = -1;
-            moveInput.Normalize();
+            moveInput = InputManager.Instance != null ? InputManager.Instance.MoveInput : Vector2.zero;
         }
 
-        bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        bool isRunning = InputManager.Instance != null && InputManager.Instance.IsRunning;
 
         // 구르기 쿨다운 감소
         if (rollCooldownTimer > 0)
@@ -61,7 +52,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 구르기 입력 확인
-        if (Input.GetKeyDown(rollKey) && !isRolling && rollCooldownTimer <= 0 && moveInput.magnitude > 0)
+        if (InputManager.Instance != null && InputManager.Instance.IsRollPressed && !isRolling && rollCooldownTimer <= 0 && moveInput.magnitude > 0)
         {
             StartRoll();
         }
@@ -124,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            bool isRunning = InputManager.Instance != null && InputManager.Instance.IsRunning;
 
             float baseSpeed = isRunning ? runSpeed : moveSpeed;
 

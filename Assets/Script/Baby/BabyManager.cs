@@ -5,36 +5,53 @@ public class BabyManager : MonoBehaviour
 {
     public static BabyManager Instance;
 
-    // ¼ºÀå ½Ã±â enum
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½ enum
     public enum BabyStage
     {
-        Infant,     // À¯¾Æ±â - Á÷Á¢ µé°í ´Ù´Ô
-        Toddler,    // °ÉÀ½¸¶±â - µ¥·Á°¡±â/µÎ°í°¡±â ¼±ÅÃ
-        // ÀÌÈÄ ½Ã±â´Â ±âÈ¹ È®Á¤ ÈÄ Ãß°¡
+        Infant,     // ï¿½ï¿½ï¿½Æ±ï¿½ - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ù´ï¿½
+        Toddler,    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½ï¿½ ï¿½ï¿½È¹ È®ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½
     }
 
-    [Header("¼ºÀå ½Ã±â")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½")]
     public BabyStage currentStage = BabyStage.Infant;
 
-    [Header("½Ã±âº° µ¥ÀÌÅÍ ¿¡¼Â")]
-    public BabyData[] stageDataList;  // Inspector¿¡¼­ Infant, Toddler ¼ø¼­·Î µå·¡±×
+    [Header("ï¿½Ã±âº° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    public BabyData[] stageDataList;  // Inspectorï¿½ï¿½ï¿½ï¿½ Infant, Toddler ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½å·¡ï¿½ï¿½
 
-    [Header("¾Æ±â À§Ä¡/»óÅÂ")]
+    [Header("ï¿½Æ±ï¿½ ï¿½ï¿½Ä¡/ï¿½ï¿½ï¿½ï¿½")]
     public bool babyPickedUp = false;
     public bool carryingBaby = false;
     public string babySceneName = "";
     public Vector3 babyPosition;
 
-    [Header("¾Æ±â ±âº» ½ºÅÈ")]
-    public string babyName = "¾Æ±â";
+    [Header("ï¿½Æ±ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½")]
+    public string babyName = "ï¿½Æ±ï¿½";
     public int babyAge = 0;
 
-    [Header("¾Æ±â ½ºÅÈ")]
+    [Header("ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public BabyStats babyStats = new BabyStats();
 
-    // ³ªÁß¿¡ ºÙÀ» °Íµé (Áö±ÝÀº ÀÚ¸®¸¸)
+    // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Íµï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¸ï¿½ï¿½ï¿½)
     // public BabyStats babyStats;
     // public BabyGrowthManager growthManager;
+
+    static class SaveKeys
+    {
+        public const string PickedUp   = "BabyPickedUp";
+        public const string Carrying   = "CarryingBaby";
+        public const string SceneName  = "BabySceneName";
+        public const string PosX       = "BabyPosX";
+        public const string PosY       = "BabyPosY";
+        public const string PosZ       = "BabyPosZ";
+        public const string Name       = "BabyName";
+        public const string Age        = "BabyAge";
+        public const string Stage      = "BabyStage";
+        public const string Health     = "BabyHealth";
+        public const string Hunger     = "BabyHunger";
+        public const string Happiness  = "BabyHappiness";
+        public const string Affection  = "BabyAffection";
+    }
 
     void Awake()
     {
@@ -50,11 +67,11 @@ public class BabyManager : MonoBehaviour
         }
     }
 
-    // ¦¡¦¡¦¡ ½Ã±â Ã¼Å© ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½ Ã¼Å© ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     public bool IsInfant() => currentStage == BabyStage.Infant;
 
-    // ÇöÀç ½Ã±â µ¥ÀÌÅÍ °¡Á®¿À±â
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public BabyData GetCurrentStageData()
     {
         foreach (var data in stageDataList)
@@ -65,7 +82,7 @@ public class BabyManager : MonoBehaviour
         return null;
     }
 
-    // ÇöÀç ¾À¿¡ ¾Æ±â°¡ ÀÖ´ÂÁö Ã¼Å© (BabyOnGround¿¡¼­ »ç¿ë)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ±â°¡ ï¿½Ö´ï¿½ï¿½ï¿½ Ã¼Å© (BabyOnGroundï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
     public bool IsBabyInCurrentScene()
     {
         return babyPickedUp &&
@@ -73,19 +90,19 @@ public class BabyManager : MonoBehaviour
                babySceneName == SceneManager.GetActiveScene().name;
     }
 
-    // ¦¡¦¡¦¡ ¾Æ±â »óÅÂ º¯°æ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    // ¾Æ±â ¹ß°ß (ÄÆ¾À Á¾·á ½ÃÁ¡¿¡ È£Ãâ)
+    // ï¿½Æ±ï¿½ ï¿½ß°ï¿½ (ï¿½Æ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½)
     public void PickUpBaby(bool carryImmediately = false)
     {
         babyPickedUp = true;
         carryingBaby = carryImmediately;
         currentStage = BabyStage.Infant;
 
-        babyName = "ÀÛÀº ¾Æ±â";
+        babyName = "ï¿½ï¿½ï¿½ï¿½ ï¿½Æ±ï¿½";
         babyAge = 0;
 
-        // BabyStats ÃÊ±âÈ­
+        // BabyStats ï¿½Ê±ï¿½È­
         babyStats.health = 100;
         babyStats.hunger = 50;
         babyStats.happiness = 80;
@@ -100,7 +117,7 @@ public class BabyManager : MonoBehaviour
         SaveState();
     }
 
-    // ¾Æ±â µé±â (BabyOnGround¿¡¼­ È£Ãâ)
+    // ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ (BabyOnGroundï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½)
     public void CarryBaby()
     {
         carryingBaby = true;
@@ -108,7 +125,7 @@ public class BabyManager : MonoBehaviour
         SaveState();
     }
 
-    // ¾Æ±â ³»·Á³õ±â / µÎ°í°¡±â (BabyCarryController¿¡¼­ È£Ãâ)
+    // ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ / ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½ (BabyCarryControllerï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½)
     public void PutDownBaby(Vector3 position, string sceneName)
     {
         carryingBaby = false;
@@ -117,55 +134,50 @@ public class BabyManager : MonoBehaviour
         SaveState();
     }
 
-    // ½Ã±â º¯°æ (³ªÁß¿¡ BabyGrowthManager°¡ È£Ãâ)
+    // ï¿½Ã±ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ß¿ï¿½ BabyGrowthManagerï¿½ï¿½ È£ï¿½ï¿½)
     public void GrowToNextStage()
     {
         if (currentStage < BabyStage.Toddler)
         {
             currentStage++;
-            Debug.Log($"¾Æ±â ¼ºÀå! ÇöÀç ½Ã±â: {currentStage}");
+            Debug.Log($"ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½: {currentStage}");
             SaveState();
         }
     }
 
-    // ¦¡¦¡¦¡ ÀúÀå / ·Îµå ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ / ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void SaveState()
     {
-        PlayerPrefs.SetInt("BabyPickedUp", babyPickedUp ? 1 : 0);
-        PlayerPrefs.SetInt("CarryingBaby", carryingBaby ? 1 : 0);
-        PlayerPrefs.SetString("BabySceneName", babySceneName);
-        PlayerPrefs.SetFloat("BabyPosX", babyPosition.x);
-        PlayerPrefs.SetFloat("BabyPosY", babyPosition.y);
-        PlayerPrefs.SetFloat("BabyPosZ", babyPosition.z);
-        PlayerPrefs.SetString("BabyName", babyName);
-        PlayerPrefs.SetInt("BabyAge", babyAge);
-        PlayerPrefs.SetInt("BabyStage", (int)currentStage);
-
-        // BabyStats ÀúÀå
-        PlayerPrefs.SetInt("BabyHealth", babyStats.health);
-        PlayerPrefs.SetInt("BabyHunger", babyStats.hunger);
-        PlayerPrefs.SetInt("BabyHappiness", babyStats.happiness);
-        PlayerPrefs.SetInt("BabyAffection", babyStats.affection);
-
+        PlayerPrefs.SetInt(SaveKeys.PickedUp,  babyPickedUp ? 1 : 0);
+        PlayerPrefs.SetInt(SaveKeys.Carrying,  carryingBaby ? 1 : 0);
+        PlayerPrefs.SetString(SaveKeys.SceneName, babySceneName);
+        PlayerPrefs.SetFloat(SaveKeys.PosX,    babyPosition.x);
+        PlayerPrefs.SetFloat(SaveKeys.PosY,    babyPosition.y);
+        PlayerPrefs.SetFloat(SaveKeys.PosZ,    babyPosition.z);
+        PlayerPrefs.SetString(SaveKeys.Name,   babyName);
+        PlayerPrefs.SetInt(SaveKeys.Age,       babyAge);
+        PlayerPrefs.SetInt(SaveKeys.Stage,     (int)currentStage);
+        PlayerPrefs.SetInt(SaveKeys.Health,    babyStats.health);
+        PlayerPrefs.SetInt(SaveKeys.Hunger,    babyStats.hunger);
+        PlayerPrefs.SetInt(SaveKeys.Happiness, babyStats.happiness);
+        PlayerPrefs.SetInt(SaveKeys.Affection, babyStats.affection);
         PlayerPrefs.Save();
     }
 
     public void LoadState()
     {
-        babyPickedUp = PlayerPrefs.GetInt("BabyPickedUp", 0) == 1;
-        carryingBaby = PlayerPrefs.GetInt("CarryingBaby", 0) == 1;
-        babySceneName = PlayerPrefs.GetString("BabySceneName", "");
-        babyPosition.x = PlayerPrefs.GetFloat("BabyPosX", 0);
-        babyPosition.y = PlayerPrefs.GetFloat("BabyPosY", 0);
-        babyPosition.z = PlayerPrefs.GetFloat("BabyPosZ", 0);
-        babyName = PlayerPrefs.GetString("BabyName", "¾Æ±â");
-        babyAge = PlayerPrefs.GetInt("BabyAge", 0);
-        currentStage = (BabyStage)PlayerPrefs.GetInt("BabyStage", 0);
-
-        // BabyStats ·Îµå
-        babyStats.health = PlayerPrefs.GetInt("BabyHealth", 100);
-        babyStats.hunger = PlayerPrefs.GetInt("BabyHunger", 50);
-        babyStats.happiness = PlayerPrefs.GetInt("BabyHappiness", 80);
-        babyStats.affection = PlayerPrefs.GetInt("BabyAffection", 50);
+        babyPickedUp  = PlayerPrefs.GetInt(SaveKeys.PickedUp,  0) == 1;
+        carryingBaby  = PlayerPrefs.GetInt(SaveKeys.Carrying,  0) == 1;
+        babySceneName = PlayerPrefs.GetString(SaveKeys.SceneName, "");
+        babyPosition.x = PlayerPrefs.GetFloat(SaveKeys.PosX,  0);
+        babyPosition.y = PlayerPrefs.GetFloat(SaveKeys.PosY,  0);
+        babyPosition.z = PlayerPrefs.GetFloat(SaveKeys.PosZ,  0);
+        babyName      = PlayerPrefs.GetString(SaveKeys.Name,  "ì•„ê¸°");
+        babyAge       = PlayerPrefs.GetInt(SaveKeys.Age,       0);
+        currentStage  = (BabyStage)PlayerPrefs.GetInt(SaveKeys.Stage, 0);
+        babyStats.health    = PlayerPrefs.GetInt(SaveKeys.Health,    100);
+        babyStats.hunger    = PlayerPrefs.GetInt(SaveKeys.Hunger,    50);
+        babyStats.happiness = PlayerPrefs.GetInt(SaveKeys.Happiness, 80);
+        babyStats.affection = PlayerPrefs.GetInt(SaveKeys.Affection, 50);
     }
 }

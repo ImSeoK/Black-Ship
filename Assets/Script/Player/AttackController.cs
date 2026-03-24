@@ -9,12 +9,6 @@ public class AttackController : MonoBehaviour
     [Header("Attack Data (Auto Set)")]
     public List<AttackData> attacks = new List<AttackData>();
 
-    [Header("Input Settings")]
-    public bool useMouseInput = true;
-    public KeyCode basicAttackKey = KeyCode.Space;
-    public KeyCode skill1Key = KeyCode.Q;
-    public KeyCode skill2Key = KeyCode.E;
-
     [Header("References")]
     public Transform hitboxParent;
     public Transform effectParent;
@@ -136,41 +130,16 @@ public class AttackController : MonoBehaviour
     void Update()
     {
         if (isAttacking || !hasWeapon) return;
+        if (InputManager.Instance == null) return;
 
-        if (useMouseInput)
-        {
-            if (Input.GetMouseButtonDown(0) && attacks.Count > 0)
-            {
-                TryAttack(attacks[0]);
-            }
+        if (InputManager.Instance.IsBasicAttackPressed && attacks.Count > 0)
+            TryAttack(attacks[0]);
 
-            if (Input.GetMouseButtonDown(1) && attacks.Count > 1)
-            {
-                TryAttack(attacks[1]);
-            }
+        if (InputManager.Instance.IsSkill1Pressed && attacks.Count > 1)
+            TryAttack(attacks[1]);
 
-            if (Input.GetMouseButtonDown(2) && attacks.Count > 2)
-            {
-                TryAttack(attacks[2]);
-            }
-        }
-        else
-        {
-            if (Input.GetKeyDown(basicAttackKey) && attacks.Count > 0)
-            {
-                TryAttack(attacks[0]);
-            }
-
-            if (Input.GetKeyDown(skill1Key) && attacks.Count > 1)
-            {
-                TryAttack(attacks[1]);
-            }
-
-            if (Input.GetKeyDown(skill2Key) && attacks.Count > 2)
-            {
-                TryAttack(attacks[2]);
-            }
-        }
+        if (InputManager.Instance.IsSkill2Pressed && attacks.Count > 2)
+            TryAttack(attacks[2]);
     }
 
     void TryAttack(AttackData attackData)

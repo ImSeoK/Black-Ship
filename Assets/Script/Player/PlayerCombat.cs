@@ -30,7 +30,6 @@ public class PlayerCombat : MonoBehaviour
         if (stats == null) return;
 
         stats.AddHP(-damage);
-        Debug.Log($"Player took {damage} damage! HP: {stats.playerHP}/{stats.maxHP}");
 
         if (stats.playerHP <= 0)
             Die();

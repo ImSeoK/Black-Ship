@@ -2,15 +2,12 @@ using UnityEngine;
 
 public class BabyCarryController : MonoBehaviour
 {
-    [Header("¾Æ±â ½ºÇÁ¶óÀÌÆ®")]
+    [Header("ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®")]
     public GameObject babySprite;
-
-    [Header("Å° ¼³Á¤")]
-    public KeyCode putDownKey = KeyCode.R;
 
     void Update()
     {
-        // À¯¾Æ±âÀÏ ¶§¸¸ ½ºÇÁ¶óÀÌÆ® Ç¥½Ã
+        // ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ç¥ï¿½ï¿½
         if (babySprite != null)
         {
             babySprite.SetActive(
@@ -22,16 +19,16 @@ public class BabyCarryController : MonoBehaviour
 
         if (BabyManager.Instance == null || !BabyManager.Instance.carryingBaby) return;
 
-        if (Input.GetKeyDown(putDownKey))
+        if (InputManager.Instance != null && InputManager.Instance.IsPutDownPressed)
         {
             if (BabyManager.Instance.IsInfant())
             {
-                // À¯¾Æ±â - ±×³É ³»·Á³õ±â
+                // ï¿½ï¿½ï¿½Æ±ï¿½ - ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 PutDownBaby();
             }
             else
             {
-                // ÀÌÈÄ ½Ã±â - µÎ°í°¡±â ¼±ÅÃÁö
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã±ï¿½ - ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 ShowLeaveChoiceUI();
             }
         }
@@ -45,18 +42,18 @@ public class BabyCarryController : MonoBehaviour
         BabyManager.Instance.PutDownBaby(dropPosition, currentScene);
         ActivateBabyOnGround();
 
-        Debug.Log($"¾Æ±â¸¦ {currentScene}¿¡ ³»·Á³õ¾Ò½À´Ï´Ù!");
+        Debug.Log($"ï¿½Æ±â¸¦ {currentScene}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò½ï¿½ï¿½Ï´ï¿½!");
     }
 
     void ShowLeaveChoiceUI()
     {
-        // À¯¾Æ±â ÀÌÈÄ - µ¥·Á°¡±â/µÎ°í°¡±â ¼±ÅÃ
+        // ï¿½ï¿½ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (ChoiceUI.Instance != null)
         {
             ChoiceUI.Instance.ShowChoice(
                 transform,
-                "µÎ°í°¡±â",
-                "Ãë¼Ò",
+                "ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½",
+                "ï¿½ï¿½ï¿½",
                 OnLeave,
                 OnCancel
             );
@@ -65,19 +62,19 @@ public class BabyCarryController : MonoBehaviour
 
     void OnLeave()
     {
-        // µÎ°í°¡±â ¼±ÅÃ ½Ã - ÇöÀç ¾À¿¡ ¹èÄ¡
+        // ï¿½Î°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
         Vector3 dropPosition = transform.position;
         string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
         BabyManager.Instance.PutDownBaby(dropPosition, currentScene);
         ActivateBabyOnGround();
 
-        Debug.Log($"¾Æ±â¸¦ {currentScene}¿¡ µÎ°í °©´Ï´Ù.");
+        Debug.Log($"ï¿½Æ±â¸¦ {currentScene}ï¿½ï¿½ ï¿½Î°ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½.");
     }
 
     void OnCancel()
     {
-        Debug.Log("Ãë¼ÒÇß½À´Ï´Ù.");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
     }
 
     void ActivateBabyOnGround()

@@ -1,30 +1,29 @@
 using UnityEngine;
+using System.Collections.Generic;
 
+/// <summary>
+/// ì˜¤ë¸Œì íŠ¸ ì´ë¦„ ê¸°ë°˜ DontDestroyOnLoad ì‹±ê¸€í†¤.
+/// ê°™ì€ ì´ë¦„ì˜ ì˜¤ë¸Œì íŠ¸ê°€ ì¤‘ë³µ ìƒì„±ë˜ë©´ ë‚˜ì¤‘ ê²ƒì„ íŒŒê´´í•©ë‹ˆë‹¤.
+/// </summary>
 public class SimpleSingleton : MonoBehaviour
 {
+    // ì”¬ ì „ì²´ íƒìƒ‰(FindObjectsByType) ì—†ì´ O(1)ë¡œ ì¤‘ë³µ ì²´í¬
+    private static readonly HashSet<string> registered = new HashSet<string>();
+
     void Awake()
     {
-        // °°Àº ÀÌ¸§ÀÇ ¿ÀºêÁ§Æ®°¡ ÀÌ¹Ì ÀÖ´ÂÁö È®ÀÎ
-        string myName = gameObject.name;
-        GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
-
-        int count = 0;
-        foreach (GameObject obj in allObjects)
+        if (registered.Contains(gameObject.name))
         {
-            // DontDestroyOnLoad ¿µ¿ªÀÌ°Å³ª ÇöÀç ¾À¿¡ °°Àº ÀÌ¸§
-            if (obj.name == myName)
-            {
-                count++;
-                if (count > 1)
-                {
-                    // Áßº¹ ¹ß°ß - ³ªÁß¿¡ »ı¼ºµÈ °Í(this) »èÁ¦
-                    Destroy(gameObject);
-                    return;
-                }
-            }
+            Destroy(gameObject);
+            return;
         }
 
-        // Áßº¹ ¾øÀ¸¸é À¯Áö
+        registered.Add(gameObject.name);
         DontDestroyOnLoad(gameObject);
+    }
+
+    void OnDestroy()
+    {
+        registered.Remove(gameObject.name);
     }
 }

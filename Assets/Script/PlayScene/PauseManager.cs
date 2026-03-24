@@ -7,19 +7,18 @@ public class PauseManager : MonoBehaviour
 
     [Header("Pause Menu")]
     public GameObject pauseMenuUI;
-    public KeyCode pauseKey = KeyCode.Escape;
 
     private bool isPaused = false;
 
     void Awake()
     {
-        // ½Ì±ÛÅæ
+        // ï¿½Ì±ï¿½ï¿½ï¿½
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // PauseMenu UI Canvasµµ À¯Áö
+            // PauseMenu UI Canvasï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (pauseMenuUI != null && pauseMenuUI.transform.root != null)
             {
                 DontDestroyOnLoad(pauseMenuUI.transform.root.gameObject);
@@ -31,19 +30,19 @@ public class PauseManager : MonoBehaviour
             return;
         }
 
-        // ¾À ·Îµå ÀÌº¥Æ® µî·Ï
+        // ï¿½ï¿½ ï¿½Îµï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDestroy()
     {
-        // ÀÌº¥Æ® ÇØÁ¦
+        // ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        // ¾À ·ÎµåµÉ ¶§¸¶´Ù ¸Þ´º ´Ý±â
+        // ï¿½ï¿½ ï¿½Îµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ ï¿½Ý±ï¿½
         if (pauseMenuUI != null)
         {
             pauseMenuUI.SetActive(false);
@@ -62,21 +61,21 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (InputManager.Instance != null && InputManager.Instance.IsPausePressed)
         {
-            // DialogueUI ¿­·ÁÀÖÀ¸¸é ¹«½Ã
+            // DialogueUI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (DialogueUI.Instance != null && DialogueUI.Instance.IsDialogueActive())
             {
                 return;
             }
 
-            // ChoiceUI ¿­·ÁÀÖÀ¸¸é ¹«½Ã
+            // ChoiceUI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (ChoiceUI.Instance != null && ChoiceUI.Instance.IsActive())
             {
                 return;
             }
 
-            // µÑ ´Ù ¾øÀ¸¸é ÀÏ½ÃÁ¤Áö Åä±Û
+            // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             if (isPaused)
             {
                 Resume();
@@ -110,20 +109,20 @@ public class PauseManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        // ÀÏ½ÃÁ¤Áö ÇØÁ¦
+        // ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Time.timeScale = 1f;
         isPaused = false;
 
-        // ¸Þ´º ´Ý±â
+        // ï¿½Þ´ï¿½ ï¿½Ý±ï¿½
         if (pauseMenuUI != null)
         {
             pauseMenuUI.SetActive(false);
         }
 
-        // ½ºÆù Á¤º¸ »èÁ¦
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         PlayerPrefs.DeleteKey("LastSpawnPoint");
 
-        // DontDestroyOnLoad ¿µ¿ª ¸ðµç ¿ÀºêÁ§Æ® »èÁ¦
+        // DontDestroyOnLoad ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         foreach (GameObject obj in allObjects)
         {
@@ -138,6 +137,6 @@ public class PauseManager : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("°ÔÀÓ Á¾·á!");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!");
     }
 }

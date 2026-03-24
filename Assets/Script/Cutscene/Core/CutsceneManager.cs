@@ -1,16 +1,23 @@
 using UnityEngine;
 using UnityEngine.Playables;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Cinemachine;
 
 public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager Instance;
 
-    [Header("컷씬 설정")]
+    [Header("자동 재생 (선택)")]
     public PlayableDirector director;
-    public string cutsceneID;
-    public bool playOnce = true;
+    public CutsceneData startData;
     public bool playOnStart = false;
+
+    // 문제2 수정: 컷씬 시작 전 활성 상태였던 컴포넌트만 기록
+    private readonly List<MonoBehaviour> originallyEnabled = new List<MonoBehaviour>();
+
+    // 문제1 수정: 델리게이트를 필드로 저장해 동일 인스턴스로 구독/해제
+    private System.Action<PlayableDirector> onStoppedCallback;
 
     void Awake()
     {
@@ -34,39 +41,47 @@ public class CutsceneManager : MonoBehaviour
     IEnumerator PlayNextFrame()
     {
         yield return null;
-        Play(director, cutsceneID, playOnce);
+        Play(director, startData, null);
     }
 
-    public void Play(PlayableDirector targetDirector, string id, bool once)
+    // onComplete: 컷씬 종료 시 호출할 콜백 (선택적)
+    public void Play(PlayableDirector targetDirector, CutsceneData data, System.Action onComplete = null)
     {
-        if (targetDirector == null)
+        if (targetDirector == null || data == null)
         {
-            Debug.LogWarning($"[CutsceneManager] {id} - Director 없음");
+            Debug.LogWarning("[CutsceneManager] Director 또는 CutsceneData 없음");
             return;
         }
 
-        if (once && HasPlayed(id))
+        if (data.playOnce && HasPlayed(data.cutsceneID))
         {
-            Debug.Log($"[CutsceneManager] {id} 스킵");
+            Debug.Log($"[CutsceneManager] {data.cutsceneID} 스킵");
             return;
         }
 
-        StartCutscene(targetDirector, id, once);
+        if (data.timelineAsset != null)
+            targetDirector.playableAsset = data.timelineAsset;
+
+        StartCutscene(targetDirector, data.cutsceneID, data.playOnce, onComplete);
     }
 
-    void StartCutscene(PlayableDirector targetDirector, string id, bool once)
+    void StartCutscene(PlayableDirector targetDirector, string id, bool once, System.Action onComplete)
     {
         DisablePlayer();
+        onStoppedCallback = (d) => OnFinished(d, id, once, onComplete);
+        targetDirector.stopped += onStoppedCallback;
         targetDirector.Play();
-        targetDirector.stopped += (d) => OnFinished(d, id, once);
     }
 
-    void OnFinished(PlayableDirector d, string id, bool once)
+    void OnFinished(PlayableDirector d, string id, bool once, System.Action onComplete)
     {
+        d.stopped -= onStoppedCallback;
+        onStoppedCallback = null;
+
         EnablePlayer();
         ResetCutsceneCameras(d);
         if (once) MarkPlayed(id);
-        d.stopped -= (dir) => OnFinished(dir, id, once);
+        onComplete?.Invoke();
     }
 
     bool HasPlayed(string id)
@@ -85,8 +100,16 @@ public class CutsceneManager : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
+        // 문제2 수정: 원래 활성 상태인 것만 기록하고 비활성화
+        originallyEnabled.Clear();
         foreach (var script in player.GetComponents<MonoBehaviour>())
-            script.enabled = false;
+        {
+            if (script.enabled)
+            {
+                originallyEnabled.Add(script);
+                script.enabled = false;
+            }
+        }
 
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
         if (rb != null) rb.linearVelocity = Vector2.zero;
@@ -94,22 +117,22 @@ public class CutsceneManager : MonoBehaviour
 
     void EnablePlayer()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) return;
-
-        foreach (var script in player.GetComponents<MonoBehaviour>())
-            script.enabled = true;
+        // 문제2 수정: 원래 켜져 있던 것만 복원
+        foreach (var script in originallyEnabled)
+        {
+            if (script != null)
+                script.enabled = true;
+        }
+        originallyEnabled.Clear();
     }
 
     void ResetCutsceneCameras(PlayableDirector d)
     {
-        foreach (var cam in d.GetComponentsInChildren<Component>())
+        foreach (var vcam in d.GetComponentsInChildren<CinemachineCamera>())
         {
-            if (cam.GetType().Name != "CinemachineCamera") continue;
-            var prop = cam.GetType().GetProperty("Priority");
-            if (prop == null) continue;
-            var priority = prop.GetValue(cam);
-            priority?.GetType().GetProperty("Value")?.SetValue(priority, 0);
+            var p = vcam.Priority;
+            p.Value = 0;
+            vcam.Priority = p;
         }
     }
 }

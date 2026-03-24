@@ -2,17 +2,16 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Header("Interaction Settings - HOT RELOAD °¡´É")]
+    [Header("Interaction Settings - HOT RELOAD ï¿½ï¿½ï¿½ï¿½")]
     public float interactionRange = 1f;
-    public Vector2 rangeOffset = new Vector2(0f, 1.5f); // Y ¿ÀÇÁ¼Â Ãß°¡
-    public KeyCode interactKey = KeyCode.E;
+    public Vector2 rangeOffset = new Vector2(0f, 1.5f); // Y ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     public LayerMask interactableLayer;
 
     private InteractableObject currentInteractable;
 
     void Update()
     {
-        // »óÈ£ÀÛ¿ë ºÒ°¡ Á¶°Ç
+        // ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Time.timeScale == 0) return;
 
         if (DialogueUI.Instance != null && DialogueUI.Instance.IsDialogueActive())
@@ -25,10 +24,10 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        // ÀÌÁ¦ »óÈ£ÀÛ¿ë °¡´É
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         DetectInteractable();
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (InputManager.Instance != null && InputManager.Instance.IsInteractPressed)
         {
             if (currentInteractable != null)
             {
@@ -39,7 +38,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void DetectInteractable()
 {
-    // ¿ÀÇÁ¼Â Àû¿ëµÈ À§Ä¡¿¡¼­ °¨Áö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     Vector2 checkPosition = (Vector2)transform.position + rangeOffset;
     
     RaycastHit2D[] hits = Physics2D.CircleCastAll(checkPosition, interactionRange, Vector2.zero, 0f, interactableLayer);

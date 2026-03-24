@@ -4,6 +4,10 @@ using UnityEngine.Playables;
 [System.Serializable]
 public class EffectBehaviour : PlayableBehaviour
 {
+    // LoadingManager를 직접 참조하지 않고 이벤트로 요청
+    // LoadingManager(또는 다른 구독자)가 처리
+    public static System.Action<float, float> OnFadeRequested;
+
     public EffectClip.EffectType effectType;
     public float shakeDuration;
     public float shakeMagnitude;
@@ -34,13 +38,11 @@ public class EffectBehaviour : PlayableBehaviour
                 break;
 
             case EffectClip.EffectType.FadeOut:
-                if (LoadingManager.Instance != null)
-                    LoadingManager.Instance.StartCoroutine(LoadingManager.Instance.Fade(0f, 1f));
+                OnFadeRequested?.Invoke(0f, 1f);
                 break;
 
             case EffectClip.EffectType.FadeIn:
-                if (LoadingManager.Instance != null)
-                    LoadingManager.Instance.StartCoroutine(LoadingManager.Instance.Fade(1f, 0f));
+                OnFadeRequested?.Invoke(1f, 0f);
                 break;
         }
     }

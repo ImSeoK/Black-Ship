@@ -6,24 +6,28 @@ public class MonsterSpawner : MonoBehaviour
 {
     public static MonsterSpawner Instance;
 
-    [Header("½ºÆù ¼³Á¤")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public List<MonsterSpawnData> monsterTypes;
     public int maxMonsters = 10;
     public float spawnInterval = 5f;
 
-    [Header("½ºÆù ¿µ¿ª")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public Vector2 spawnAreaMin = new Vector2(-20, -20);
     public Vector2 spawnAreaMax = new Vector2(20, 20);
     public float minDistanceFromPlayer = 10f;
 
     private List<Monster> activeMonsters = new List<Monster>();
-    private Dictionary<string, Queue<Monster>> monsterPools = new Dictionary<string, Queue<Monster>>(); // ¡ç º¯°æ!
+    private Dictionary<string, Queue<Monster>> monsterPools = new Dictionary<string, Queue<Monster>>();
     private float spawnTimer;
+    private float cachedTotalWeight;
     private Transform player;
 
     void Awake()
     {
-
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
     }
 
     void Start()
@@ -31,6 +35,7 @@ public class MonsterSpawner : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         InitializePool();
+        CacheTotalWeight();
 
         for (int i = 0; i < maxMonsters / 2; i++)
         {
@@ -47,6 +52,13 @@ public class MonsterSpawner : MonoBehaviour
             SpawnMonster();
             spawnTimer = 0f;
         }
+    }
+
+    void CacheTotalWeight()
+    {
+        cachedTotalWeight = 0f;
+        foreach (var data in monsterTypes)
+            cachedTotalWeight += data.spawnWeight;
     }
 
     void InitializePool()
@@ -77,12 +89,7 @@ public class MonsterSpawner : MonoBehaviour
     {
         if (monsterTypes.Count == 0) return;
 
-        // °¡ÁßÄ¡ ±â¹Ý ·£´ý ¼±ÅÃ
-        float totalWeight = 0f;
-        foreach (var data in monsterTypes)
-            totalWeight += data.spawnWeight;
-
-        float randomValue = Random.Range(0f, totalWeight);
+        float randomValue = Random.Range(0f, cachedTotalWeight);
         float currentWeight = 0f;
 
         MonsterSpawnData selectedData = monsterTypes[0];
@@ -124,7 +131,7 @@ public class MonsterSpawner : MonoBehaviour
             Monster monster = monsterPools[monsterName].Dequeue();
             return monster;
         }
-        return null; // ¡ç Ç® ºñ¸é null ¹ÝÈ¯ (»õ·Î »ý¼º ¾È ÇÔ!)
+        return null; // ï¿½ï¿½ Ç® ï¿½ï¿½ï¿½ null ï¿½ï¿½È¯ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½!)
     }
 
     public void ReturnMonsterToPool(Monster monster)
@@ -149,7 +156,7 @@ public class MonsterSpawner : MonoBehaviour
 
         do
         {
-            // ½ºÆ÷³Ê À§Ä¡ ±âÁØÀ¸·Î »ó´ë ÁÂÇ¥ °è»ê
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½
             float x = Random.Range(spawnAreaMin.x, spawnAreaMax.x) + transform.position.x;
             float y = Random.Range(spawnAreaMin.y, spawnAreaMax.y) + transform.position.y;
             spawnPos = new Vector2(x, y);
@@ -166,7 +173,7 @@ public class MonsterSpawner : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
 
-        // ½ºÆ÷³Ê À§Ä¡ ±âÁØÀ¸·Î ¹Ú½º ±×¸®±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
         Vector2 center = (spawnAreaMin + spawnAreaMax) / 2f + (Vector2)transform.position;
         Vector2 size = spawnAreaMax - spawnAreaMin;
 
@@ -179,6 +186,6 @@ public class MonsterSpawnData
 {
     public Monster monsterPrefab;
     public int poolSize = 5;
-    [Range(0f, 1f)]
+    [Range(0f, 10f)]
     public float spawnWeight = 1f;
 }

@@ -24,12 +24,24 @@ public class InventoryUI : MonoBehaviour
             Destroy(gameObject);
     }
 
+    void OnEnable()
+    {
+        PlayerStats.StatsChanged += OnStatsChanged;
+    }
+
+    void OnDisable()
+    {
+        PlayerStats.StatsChanged -= OnStatsChanged;
+    }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (InputManager.Instance == null) return;
+
+        if (InputManager.Instance.IsInventoryPressed)
             Toggle();
 
-        if (Input.GetKeyDown(KeyCode.Escape) && isOpen)
+        if (InputManager.Instance.IsPausePressed && isOpen)
             Toggle();
     }
 
@@ -59,14 +71,12 @@ public class InventoryUI : MonoBehaviour
         inventoryPanel.SetActive(false);
     }
 
-    public void OnStatsChanged()
+    // PlayerStats.StatsChanged 이벤트 구독 대상
+    // PlayerHUD는 별도로 같은 이벤트를 구독하므로 여기서 UpdateHUD 호출 불필요
+    void OnStatsChanged()
     {
-        PlayerHUD.Instance?.UpdateHUD();
-
-        // 열려있든 닫혀있든 항상 내부 데이터 동기화
         SyncStats();
 
-        // 화면 갱신은 열려있을 때만
         if (isOpen)
             statsUI?.Refresh();
     }

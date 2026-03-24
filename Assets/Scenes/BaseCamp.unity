@@ -1798,7 +1798,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &264029397
 Transform:
   m_ObjectHideFlags: 0
@@ -1856,8 +1856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   director: {fileID: 264029398}
-  cutsceneID: OpeningCutscene
-  playOnce: 0
+  startData: {fileID: 11400000, guid: 22eb0257771bd2f4f9e0a75e09412be4, type: 2}
   playOnStart: 1
 --- !u!1 &287300448
 GameObject:
@@ -10242,7 +10241,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 380873748}
-  pauseKey: 27
 --- !u!1 &1507977694
 GameObject:
   m_ObjectHideFlags: 0

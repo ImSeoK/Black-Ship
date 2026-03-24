@@ -4,11 +4,20 @@ using UnityEngine;
 /// 모든 입력을 한 곳에서 관리합니다.
 /// [DefaultExecutionOrder(-100)] 으로 다른 스크립트보다 먼저 Update가 실행됩니다.
 /// 키 변경은 이 컴포넌트의 Inspector에서만 수정하면 됩니다.
+/// 씬에 없어도 자동 생성됩니다.
 /// </summary>
 [DefaultExecutionOrder(-100)]
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void AutoCreate()
+    {
+        if (Instance != null) return;
+        GameObject go = new GameObject("InputManager");
+        go.AddComponent<InputManager>();
+    }
 
     [Header("이동")]
     public KeyCode moveLeft  = KeyCode.A;
@@ -21,6 +30,7 @@ public class InputManager : MonoBehaviour
     public KeyCode interactKey  = KeyCode.E;
     public KeyCode inventoryKey = KeyCode.I;
     public KeyCode pauseKey     = KeyCode.Escape;
+    public KeyCode putDownKey   = KeyCode.R;
 
     [Header("공격")]
     public bool useMouseInput     = true;
@@ -39,6 +49,7 @@ public class InputManager : MonoBehaviour
     public bool IsInteractPressed  { get; private set; }
     public bool IsInventoryPressed { get; private set; }
     public bool IsPausePressed     { get; private set; }
+    public bool IsPutDownPressed   { get; private set; }
 
     // ── 공격 (해당 프레임만 true) ─────────────────────
     public bool IsBasicAttackPressed { get; private set; }
@@ -75,6 +86,7 @@ public class InputManager : MonoBehaviour
         IsInteractPressed  = Input.GetKeyDown(interactKey);
         IsInventoryPressed = Input.GetKeyDown(inventoryKey);
         IsPausePressed     = Input.GetKeyDown(pauseKey);
+        IsPutDownPressed   = Input.GetKeyDown(putDownKey);
 
         // 공격
         if (useMouseInput)

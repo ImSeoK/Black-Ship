@@ -5,24 +5,24 @@ using System.Collections;
 
 public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [Header("Å¬¸¯ È¿°ú")]
+    [Header("Å¬ï¿½ï¿½ È¿ï¿½ï¿½")]
     public float shakeDuration = 0.1f;
     public float shakeAmount = 5f;
     public float scalePunch = 0.9f;
     
-    [Header("±úÁö´Â ÀÌÆåÆ®")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®")]
     public Sprite crackSprite;
     public float crackDuration = 0.3f;
     
-    [Header("»ç¿îµå")]
-    public AudioClip clickSound; // Ãß°¡!
+    [Header("ï¿½ï¿½ï¿½ï¿½")]
+    public AudioClip clickSound; // ï¿½ß°ï¿½!
     
     private Vector3 originalScale;
     private Vector3 originalPosition;
     private RectTransform rectTransform;
     private Coroutine effectCoroutine;
     private GameObject currentCrackObj;
-    private AudioSource audioSource; // Ãß°¡!
+    private AudioSource audioSource; // ï¿½ß°ï¿½!
 
     void Start()
     {
@@ -33,11 +33,8 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // SoundManager·Î Àç»ý
-        if (clickSound != null && SoundManager.Instance != null)
-        {
-            SoundManager.Instance.PlaySound(clickSound);
-        }
+        if (clickSound != null && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(clickSound);
 
         if (effectCoroutine != null)
         {
@@ -62,7 +59,7 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
         if (crackSprite != null)
         {
             crackObj = new GameObject("Crack");
-            currentCrackObj = crackObj; // ÀúÀå!
+            currentCrackObj = crackObj; // ï¿½ï¿½ï¿½ï¿½!
 
             crackObj.transform.SetParent(transform.parent);
 
@@ -79,12 +76,12 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
             crackImage.color = c;
         }
 
-        // ¼ø°£ ÀÛ¾ÆÁü
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½
         rectTransform.localScale = originalScale * scalePunch;
 
         float elapsed = 0f;
 
-        // Èçµé¸² + ±Õ¿­ ¼­¼­È÷ ³ªÅ¸³²
+        // ï¿½ï¿½é¸² + ï¿½Õ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½
         while (elapsed < shakeDuration)
         {
             float x = Random.Range(-shakeAmount, shakeAmount);
@@ -92,7 +89,7 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
             rectTransform.localPosition = originalPosition + new Vector3(x, y, 0);
 
-            // ±Õ¿­ ÆäÀÌµå ÀÎ
+            // ï¿½Õ¿ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½
             if (crackImage != null)
             {
                 Color c = crackImage.color;
@@ -104,11 +101,11 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
             yield return null;
         }
 
-        // ¿ø·¡´ë·Î
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         rectTransform.localPosition = originalPosition;
         rectTransform.localScale = originalScale;
 
-        // ±Õ¿­ À¯Áö
+        // ï¿½Õ¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (crackImage != null)
         {
             Color c = crackImage.color;
@@ -116,7 +113,7 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
             crackImage.color = c;
         }
 
-        // crackDuration ÈÄ ÆäÀÌµå ¾Æ¿ô
+        // crackDuration ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Æ¿ï¿½
         yield return new WaitForSeconds(crackDuration);
 
         elapsed = 0f;
@@ -135,11 +132,11 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
             yield return null;
         }
 
-        // »èÁ¦
+        // ï¿½ï¿½ï¿½ï¿½
         if (crackObj != null)
         {
             Destroy(crackObj);
-            currentCrackObj = null; // null Ã³¸®!
+            currentCrackObj = null; // null Ã³ï¿½ï¿½!
         }
 
         effectCoroutine = null;
@@ -147,8 +144,8 @@ public class ButtonClickEffect : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        // IPointerUpHandler ÀÎÅÍÆäÀÌ½º ±¸Çö
-        // ÇÊ¿ä ¾øÀ¸¸é ºñ¿öµÒ
+        // IPointerUpHandler ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
 }

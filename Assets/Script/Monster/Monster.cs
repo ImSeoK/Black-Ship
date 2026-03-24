@@ -98,49 +98,19 @@ public class Monster : MonoBehaviour
 
     public void OnSpawn()
     {
-#if UNITY_EDITOR
-        Debug.Log($"=== OnSpawn: {monsterName} ===");
-        Debug.Log($"AttackHitbox before check: {attackHitbox != null}");
-#endif
-
         if (spriteRenderer == null || animator == null || rb == null)
-        {
-#if UNITY_EDITOR
-            Debug.LogWarning("Components null! Re-initializing...");
-#endif
             InitializeComponents();
-        }
 
         if (attackHitbox == null)
         {
-#if UNITY_EDITOR
-            Debug.LogWarning($"{monsterName}: AttackHitbox is NULL! Searching...");
-#endif
             Transform hitboxTransform = transform.Find("AttackHitbox");
             if (hitboxTransform != null)
-            {
                 attackHitbox = hitboxTransform.gameObject;
 #if UNITY_EDITOR
-                Debug.Log($"{monsterName}: AttackHitbox found and assigned!");
-#endif
-            }
             else
-            {
-#if UNITY_EDITOR
                 Debug.LogError($"{monsterName}: AttackHitbox NOT FOUND in children!");
 #endif
-            }
         }
-        else
-        {
-#if UNITY_EDITOR
-            Debug.Log($"{monsterName}: AttackHitbox already assigned!");
-#endif
-        }
-
-#if UNITY_EDITOR
-        Debug.Log($"AttackHitbox after check: {attackHitbox != null}");
-#endif
 
         currentHealth = maxHealth;
         isDead = false;
@@ -337,13 +307,7 @@ public class Monster : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
 
         if (animator != null)
-        {
             animator.SetTrigger(dieHash);
-        }
-
-#if UNITY_EDITOR
-        Debug.Log(monsterName + " died!");
-#endif
 
         StartCoroutine(DieAfterAnimation());
     }

@@ -4,8 +4,8 @@ using UnityEngine.Playables;
 [CreateAssetMenu(menuName = "Cutscene/CutsceneData")]
 public class CutsceneData : ScriptableObject
 {
-    [Header("ÄÆ¾À ¼³Á¤")]
+    [Header("ì»·ì”¬ ì„¤ì •")]
     public string cutsceneID;
-    public PlayableDirector timeline;
+    public PlayableAsset timelineAsset;  // Timeline .asset íŒŒì¼ (ScriptableObject)
     public bool playOnce = true;
 }
