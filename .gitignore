@@ -21,3 +21,14 @@ Thumbs.db
 .vs/
 .vsconfig
 UpgradeLog.htm
+
+# 민감 정보 파일
+.env
+.env.local
+.env.*.local
+secrets.json
+credentials.*
+*.secret
+
+# Claude Code 로컬 설정
+.claude/

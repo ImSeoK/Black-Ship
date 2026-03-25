@@ -13,6 +13,9 @@ public class CutsceneManager : MonoBehaviour
     public CutsceneData startData;
     public bool playOnStart = false;
 
+    [Header("개발용 (빌드 전 반드시 해제)")]
+    public bool debugIgnorePlayOnce = false;
+
     // 문제2 수정: 컷씬 시작 전 활성 상태였던 컴포넌트만 기록
     private readonly List<MonoBehaviour> originallyEnabled = new List<MonoBehaviour>();
 
@@ -53,7 +56,7 @@ public class CutsceneManager : MonoBehaviour
             return;
         }
 
-        if (data.playOnce && HasPlayed(data.cutsceneID))
+        if (data.playOnce && !debugIgnorePlayOnce && HasPlayed(data.cutsceneID))
         {
             Debug.Log($"[CutsceneManager] {data.cutsceneID} 스킵");
             return;
@@ -68,6 +71,7 @@ public class CutsceneManager : MonoBehaviour
     void StartCutscene(PlayableDirector targetDirector, string id, bool once, System.Action onComplete)
     {
         DisablePlayer();
+        if (LetterboxUI.Instance != null) LetterboxUI.Instance.Show();
         onStoppedCallback = (d) => OnFinished(d, id, once, onComplete);
         targetDirector.stopped += onStoppedCallback;
         targetDirector.Play();
@@ -79,6 +83,7 @@ public class CutsceneManager : MonoBehaviour
         onStoppedCallback = null;
 
         EnablePlayer();
+        if (LetterboxUI.Instance != null) LetterboxUI.Instance.Hide();
         ResetCutsceneCameras(d);
         if (once) MarkPlayed(id);
         onComplete?.Invoke();
@@ -93,6 +98,16 @@ public class CutsceneManager : MonoBehaviour
     {
         PlayerPrefs.SetInt($"Cutscene_{id}", 1);
         PlayerPrefs.Save();
+    }
+
+    [ContextMenu("컷씬 기록 전체 초기화")]
+    void ResetAllCutsceneRecords()
+    {
+        // Cutscene_ 접두사 키만 삭제하기 위해 알려진 ID를 수동 삭제
+        // (PlayerPrefs는 key 목록 조회 API가 없으므로 전체 삭제 사용)
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("[CutsceneManager] 모든 컷씬 기록 초기화 완료");
     }
 
     void DisablePlayer()
