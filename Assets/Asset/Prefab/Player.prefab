@@ -282,10 +282,6 @@ MonoBehaviour:
   attacks:
   - {fileID: 11400000, guid: 4f875da53c1e1f548ab4f3c7c48ddd7e, type: 2}
   - {fileID: 11400000, guid: b98ff8cf4396b1440930ceacdbc9e631, type: 2}
-  useMouseInput: 1
-  basicAttackKey: 32
-  skill1Key: 113
-  skill2Key: 101
   hitboxParent: {fileID: 6097342437454429052}
   effectParent: {fileID: 0}
 --- !u!114 &755577436825014964
@@ -319,8 +315,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4dfe60b46db56d43a48e40696f16a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponDatabase:
-  - {fileID: 11400000, guid: a565b8fc3b2d22d4ab1887cf5411432e, type: 2}
 --- !u!114 &4581717573937768047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,7 +349,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionRange: 1
   rangeOffset: {x: 0, y: 1.5}
-  interactKey: 101
   interactableLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -376,7 +369,6 @@ MonoBehaviour:
   rollSpeed: 12
   rollDuration: 0.3
   rollCooldown: 1
-  rollKey: 32
 --- !u!114 &6269355676577154625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,7 +382,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   babySprite: {fileID: 2368087939183559991}
-  putDownKey: 114
 --- !u!114 &264925997154945451
 MonoBehaviour:
   m_ObjectHideFlags: 0

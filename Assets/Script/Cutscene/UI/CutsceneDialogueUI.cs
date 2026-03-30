@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Playables;
 using TMPro;
 using System.Collections;
 
@@ -6,18 +7,22 @@ public class CutsceneDialogueUI : MonoBehaviour
 {
     public static CutsceneDialogueUI Instance;
 
-    [Header("UI ����")]
+    [Header("UI 참조")]
     public GameObject dialoguePanel;
-    public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI dialogueText;
+    [Tooltip("타이핑 완료 후 표시할 진행 표시(다음 버튼 화살표 등)")]
+    public GameObject nextIndicator;
 
     private Coroutine typingCoroutine;
-    private Coroutine autoHideCoroutine;
 
-    // SkipToEnd를 위한 현재 다이얼로그 상태 보관
     private string currentFullText;
-    private bool currentAutoProgress;
-    private float currentAutoDelay;
+    private bool isTyping = false;
+
+    public bool IsDirectorPausedByUs { get; private set; } = false;
+
+    private PlayableDirector currentDirector;
+    private double currentClipEndTime;
 
     void Awake()
     {
@@ -35,25 +40,46 @@ public class CutsceneDialogueUI : MonoBehaviour
     void Start()
     {
         dialoguePanel?.SetActive(false);
+        nextIndicator?.SetActive(false);
     }
 
-    public void ShowDialogue(string speaker, string text, float typingSpeed, bool autoProgress, float autoDelay)
+    // ================================================================
+    // 공개 API
+    // ================================================================
+
+    /// <summary>
+    /// 컷씬(Timeline) 구간에서 호출. director를 전달하면 Pause/Resume을 자동 처리합니다.
+    /// director가 null이면 일반 대화 모드로 동작합니다.
+    /// </summary>
+    public void ShowDialogue(string speaker, string text, float typingSpeed,
+                             SpeakerType speakerType, PlayableDirector director, double clipEndTime)
     {
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-        if (autoHideCoroutine != null) StopCoroutine(autoHideCoroutine);
 
         currentFullText    = text;
-        currentAutoProgress = autoProgress;
-        currentAutoDelay   = autoDelay;
+        currentDirector    = director;
+        currentClipEndTime = clipEndTime;
+        isTyping           = false;
 
-        speakerText.text = speaker;
-        dialoguePanel.SetActive(true);
-        typingCoroutine = StartCoroutine(TypeText(text, typingSpeed, autoProgress, autoDelay));
+        if (speakerText != null) speakerText.text = speaker;
+        if (dialogueText != null) dialogueText.color = SpeakerColors.GetColor(speakerType);
+
+        dialoguePanel?.SetActive(true);
+        nextIndicator?.SetActive(false);
+
+        // director가 있으면 즉시 속도 0으로 동결 (PlayState 유지, OnBehaviourPause 미발화)
+        if (currentDirector != null)
+        {
+            IsDirectorPausedByUs = true;
+            if (currentDirector.playableGraph.IsValid())
+                currentDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+        }
+
+        typingCoroutine = StartCoroutine(TypeText(text, typingSpeed));
     }
 
     /// <summary>
-    /// 타이핑을 즉시 완료하고 전체 텍스트를 표시합니다.
-    /// 클립이 일찍 끝날 때 텍스트가 잘리는 문제를 방지합니다.
+    /// 타이핑을 즉시 완료합니다. OnBehaviourPause에서 호출 가능.
     /// </summary>
     public void SkipToEnd()
     {
@@ -61,29 +87,69 @@ public class CutsceneDialogueUI : MonoBehaviour
         {
             StopCoroutine(typingCoroutine);
             typingCoroutine = null;
-            dialogueText.text = currentFullText;
-
-            // autoProgress이면 autoHide 시작 (아직 시작 안 됐으면)
-            if (currentAutoProgress && autoHideCoroutine == null)
-                autoHideCoroutine = StartCoroutine(AutoHide(currentAutoDelay));
         }
-        // 타이핑이 이미 끝났거나 패널이 없으면 아무것도 하지 않음
+        if (dialogueText != null) dialogueText.text = currentFullText;
+        isTyping = false;
+        nextIndicator?.SetActive(true);
     }
 
+    /// <summary>
+    /// 대화 패널을 숨기고 director를 재개합니다.
+    /// </summary>
     public void HideDialogue()
     {
-        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-        if (autoHideCoroutine != null) StopCoroutine(autoHideCoroutine);
+        if (typingCoroutine != null) { StopCoroutine(typingCoroutine); typingCoroutine = null; }
         dialoguePanel?.SetActive(false);
+        nextIndicator?.SetActive(false);
+        isTyping = false;
+
+        if (currentDirector != null && IsDirectorPausedByUs)
+        {
+            IsDirectorPausedByUs = false;
+            var d = currentDirector;
+            currentDirector = null; // 먼저 null 처리: d.time 점프 시 콜백이 동기 발화되므로
+
+            if (d.playableGraph.IsValid())
+            {
+                d.playableGraph.GetRootPlayable(0).SetSpeed(1);
+                d.time = currentClipEndTime; // 클립 끝으로 점프 → 다음 클립 즉시 시작
+            }
+        }
     }
 
-    IEnumerator TypeText(string text, float speed, bool autoProgress, float autoDelay)
+    // ================================================================
+    // 입력 처리
+    // ================================================================
+
+    void Update()
     {
-        dialogueText.text = "";
+        if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
+        if (!Input.GetKeyDown(KeyCode.Space)) return;
+
+        if (isTyping)
+        {
+            // 타이핑 중 → 즉시 완성 (아직 director 재개하지 않음)
+            SkipToEnd();
+            return;
+        }
+
+        // 타이핑 완료 상태 → 대화 닫고 director 재개
+        HideDialogue();
+    }
+
+    // ================================================================
+    // 내부 로직
+    // ================================================================
+
+    IEnumerator TypeText(string text, float speed)
+    {
+        isTyping = true;
+        if (dialogueText != null) dialogueText.text = "";
 
         foreach (char c in text)
         {
-            dialogueText.text += c;
+            if (dialogueText != null) dialogueText.text += c;
+
             float t = 0f;
             while (t < speed)
             {
@@ -92,13 +158,8 @@ public class CutsceneDialogueUI : MonoBehaviour
             }
         }
 
-        if (autoProgress)
-            autoHideCoroutine = StartCoroutine(AutoHide(autoDelay));
-    }
-
-    IEnumerator AutoHide(float delay)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        HideDialogue();
+        isTyping = false;
+        typingCoroutine = null;
+        nextIndicator?.SetActive(true);
     }
 }

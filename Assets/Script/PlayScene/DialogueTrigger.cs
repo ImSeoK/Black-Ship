@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
 {
-    [Header("È­ÀÚ Á¤º¸")]
+    [Header("í™”ìž ì„¤ì •")]
     public string speakerName = "???";
+    public SpeakerType speakerType = SpeakerType.Other;
 
-    [Header("´ë»ç ³»¿ë")]
+    [Header("ëŒ€ì‚¬ ëª©ë¡")]
     [TextArea(3, 10)]
     public string[] dialogues;
 
@@ -13,7 +14,7 @@ public class DialogueTrigger : MonoBehaviour
     {
         if (DialogueUI.Instance != null && dialogues.Length > 0)
         {
-            DialogueUI.Instance.ShowDialogue(speakerName, dialogues);
+            DialogueUI.Instance.ShowDialogue(speakerName, dialogues, speakerType);
         }
     }
 }

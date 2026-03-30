@@ -5,42 +5,34 @@ using UnityEngine.Timeline;
 [System.Serializable]
 public class DialogueClip : PlayableAsset, ITimelineClipAsset
 {
-    [Header("��� ����")]
+    [Header("화자 설정")]
     public string speaker = "???";
+    public SpeakerType speakerType = SpeakerType.Other;
 
+    [Header("대사")]
     [TextArea(3, 10)]
     public string dialogueText = "";
 
-    [Header("Ÿ���� ����")]
+    [Header("타이핑 속도")]
     [Range(0.01f, 0.2f)]
     public float typingSpeed = 0.05f;
-    public bool autoProgress = true;
-    public float autoProgressDelay = 2f;
 
     public ClipCaps clipCaps => ClipCaps.None;
 
-    // 타이핑 완료 시간 기반 자동 클립 길이 계산
-    // 글자수 × typingSpeed + (autoProgress이면 autoProgressDelay, 아니면 여유 0.5초)
-    public override double duration
-    {
-        get
-        {
-            double typingTime = dialogueText.Length * typingSpeed;
-            double holdTime  = autoProgress ? autoProgressDelay : 0.5;
-            return System.Math.Max(typingTime + holdTime, 0.1);
-        }
-    }
+    // 플레이어가 직접 진행하므로 클립 길이는 최솟값으로 고정.
+    // Timeline에서는 클립이 시작되자마자 director가 Pause되므로
+    // 실제 대기 시간은 클립 길이와 무관합니다.
+    public override double duration => 0.5;
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
         var playable = ScriptPlayable<DialogueBehaviour>.Create(graph);
         var behaviour = playable.GetBehaviour();
 
-        behaviour.speaker = speaker;
+        behaviour.speaker      = speaker;
         behaviour.dialogueText = dialogueText;
-        behaviour.typingSpeed = typingSpeed;
-        behaviour.autoProgress = autoProgress;
-        behaviour.autoProgressDelay = autoProgressDelay;
+        behaviour.typingSpeed  = typingSpeed;
+        behaviour.speakerType  = speakerType;
 
         return playable;
     }

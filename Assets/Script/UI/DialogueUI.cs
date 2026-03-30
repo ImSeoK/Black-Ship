@@ -6,22 +6,28 @@ public class DialogueUI : MonoBehaviour
 {
     public static DialogueUI Instance;
 
+    [Header("UI ì°¸ì¡°")]
     public GameObject dialoguePanel;
-    public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI dialogueText;
+    [Tooltip("íƒ€ì´í•‘ ì™„ë£Œ í›„ í‘œì‹œí•  ì§„í–‰ í‘œì‹œ(ë‹¤ìŒ ë²„íŠ¼ í™”ì‚´í‘œ ë“±)")]
+    public GameObject nextIndicator;
+
+    [Header("ì„¤ì •")]
     public float typingSpeed = 0.05f;
 
     private string[] dialogues;
     private int index = 0;
-
-    private bool canAcceptInput = false;
+    private bool isTyping = false;
+    private string currentFullText = "";
+    private Coroutine typingCoroutine;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // ¡ç ÀÌ°Í¸¸ Ãß°¡
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -32,29 +38,37 @@ public class DialogueUI : MonoBehaviour
     void Start()
     {
         dialoguePanel.SetActive(false);
+        nextIndicator?.SetActive(false);
     }
 
-    public void ShowDialogue(string speaker, string[] texts)
+    public void ShowDialogue(string speaker, string[] texts, SpeakerType speakerType = SpeakerType.Other)
     {
-        StopAllCoroutines();
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+
         dialogues = (string[])texts.Clone();
         index = 0;
+
         speakerText.text = speaker;
+        dialogueText.color = SpeakerColors.GetColor(speakerType);
+
         dialoguePanel.SetActive(true);
+        nextIndicator?.SetActive(false);
         Time.timeScale = 0f;
 
-        canAcceptInput = false; // ÀÔ·Â ¸·±â
-        StartCoroutine(Type());
+        typingCoroutine = StartCoroutine(Type());
     }
 
     IEnumerator Type()
     {
-        string fullText = dialogues[index];
+        isTyping = true;
+        nextIndicator?.SetActive(false);
+
+        currentFullText = dialogues[index];
         dialogueText.text = "";
 
-        for (int i = 0; i < fullText.Length; i++)
+        foreach (char c in currentFullText)
         {
-            dialogueText.text += fullText[i];
+            dialogueText.text += c;
 
             float timer = 0f;
             while (timer < typingSpeed)
@@ -64,27 +78,47 @@ public class DialogueUI : MonoBehaviour
             }
         }
 
-        canAcceptInput = true; // Å¸ÀÌÇÎ ³¡³ª¸é ÀÔ·Â Çã¿ë
+        isTyping = false;
+        typingCoroutine = null;
+        nextIndicator?.SetActive(true);
+    }
+
+    void InstantComplete()
+    {
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
+        dialogueText.text = currentFullText;
+        isTyping = false;
+        nextIndicator?.SetActive(true);
     }
 
     void Update()
     {
         if (!dialoguePanel.activeSelf) return;
+        if (!Input.GetKeyDown(KeyCode.Space)) return;
 
-        if (canAcceptInput && Input.GetKeyDown(KeyCode.Space))
+        if (isTyping)
         {
-            canAcceptInput = false; // Áßº¹ ¹æÁö
-            index++;
-            if (index < dialogues.Length)
-            {
-                StopAllCoroutines();
-                StartCoroutine(Type());
-            }
-            else
-            {
-                dialoguePanel.SetActive(false);
-                Time.timeScale = 1f;
-            }
+            // íƒ€ì´í•‘ ì¤‘ â†’ ì¦‰ì‹œ ì™„ì„±
+            InstantComplete();
+            return;
+        }
+
+        // íƒ€ì´í•‘ ì™„ë£Œ ìƒíƒœ â†’ ë‹¤ìŒ ëŒ€ì‚¬ ë˜ëŠ” ì¢…ë£Œ
+        nextIndicator?.SetActive(false);
+        index++;
+
+        if (index < dialogues.Length)
+        {
+            typingCoroutine = StartCoroutine(Type());
+        }
+        else
+        {
+            dialoguePanel.SetActive(false);
+            Time.timeScale = 1f;
         }
     }
 
