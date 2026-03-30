@@ -27,8 +27,7 @@ public class LoadingManager : MonoBehaviour
             if (loadingPanel != null && loadingPanel.transform.parent != null)
                 DontDestroyOnLoad(loadingPanel.transform.root.gameObject);
 
-            // 컷씬 페이드 요청 구독 (EffectBehaviour와 결합도 제거)
-            EffectBehaviour.OnFadeRequested += HandleFadeRequest;
+            // 컷씬 페이드는 ScreenFadeUI에서 처리
         }
         else
         {
@@ -42,7 +41,7 @@ public class LoadingManager : MonoBehaviour
 
     void OnDestroy()
     {
-        EffectBehaviour.OnFadeRequested -= HandleFadeRequest;
+        // ScreenFadeUI가 OnFadeRequested 구독 관리
     }
 
     void HandleFadeRequest(float from, float to)

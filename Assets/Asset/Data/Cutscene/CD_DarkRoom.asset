@@ -15,3 +15,4 @@ MonoBehaviour:
   cutsceneID: DarkRoom
   timelineAsset: {fileID: 11400000, guid: cf069566217d7f344b4a8fd6ee88085a, type: 2}
   playOnce: 1
+  keepLetterboxOnEnd: 1

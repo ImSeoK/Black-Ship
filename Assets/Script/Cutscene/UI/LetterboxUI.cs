@@ -35,6 +35,14 @@ public class LetterboxUI : MonoBehaviour
     public void Show()
     {
         if (currentAnim != null) StopCoroutine(currentAnim);
+
+        // 이미 완전히 표시된 상태면 애니메이션 생략 (연속 컷씬 전환 시 깜빡임 방지)
+        if (topBar != null && Mathf.Approximately(topBar.anchoredPosition.y, 0f))
+        {
+            currentAnim = null;
+            return;
+        }
+
         currentAnim = StartCoroutine(Animate(show: true));
     }
 

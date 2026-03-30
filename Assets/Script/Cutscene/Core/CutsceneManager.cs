@@ -65,25 +65,25 @@ public class CutsceneManager : MonoBehaviour
         if (data.timelineAsset != null)
             targetDirector.playableAsset = data.timelineAsset;
 
-        StartCutscene(targetDirector, data.cutsceneID, data.playOnce, onComplete);
+        StartCutscene(targetDirector, data.cutsceneID, data.playOnce, data.keepLetterboxOnEnd, onComplete);
     }
 
-    void StartCutscene(PlayableDirector targetDirector, string id, bool once, System.Action onComplete)
+    void StartCutscene(PlayableDirector targetDirector, string id, bool once, bool keepLetterbox, System.Action onComplete)
     {
         DisablePlayer();
         if (LetterboxUI.Instance != null) LetterboxUI.Instance.Show();
-        onStoppedCallback = (d) => OnFinished(d, id, once, onComplete);
+        onStoppedCallback = (d) => OnFinished(d, id, once, keepLetterbox, onComplete);
         targetDirector.stopped += onStoppedCallback;
         targetDirector.Play();
     }
 
-    void OnFinished(PlayableDirector d, string id, bool once, System.Action onComplete)
+    void OnFinished(PlayableDirector d, string id, bool once, bool keepLetterbox, System.Action onComplete)
     {
         d.stopped -= onStoppedCallback;
         onStoppedCallback = null;
 
         EnablePlayer();
-        if (LetterboxUI.Instance != null) LetterboxUI.Instance.Hide();
+        if (!keepLetterbox && LetterboxUI.Instance != null) LetterboxUI.Instance.Hide();
         ResetCutsceneCameras(d);
         if (once) MarkPlayed(id);
         onComplete?.Invoke();

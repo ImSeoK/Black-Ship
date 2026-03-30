@@ -17,6 +17,9 @@ public class PrologueManager : MonoBehaviour
     [Header("2구간 - 약소국 쉘터 외부 인계 (컷씬 + 대화)")]
     public PlayableDirector shelterDirector;
     public CutsceneData shelterData;
+    private bool searchSectionDone = false;
+
+    public void CompleteSearch() => searchSectionDone = true;
 
     [Header("4구간 - 병력 습격 (컷씬)")]
     public PlayableDirector ambushDirector;
@@ -107,8 +110,19 @@ public class PrologueManager : MonoBehaviour
 
     IEnumerator Section2_ShelterHandover()
     {
-        Debug.Log("[Prologue] 2구간: 약소국 쉘터 외부 인계");
+        Debug.Log("[Prologue] 2구간: 접견지 수색");
+        // 초반 컷씬 (도착 연출 + 나레이션)
         yield return PlayCutscene(shelterDirector, shelterData);
+
+        // 플레이어 활성화 → 수색 조작
+        if (playerObject != null)
+            playerObject.SetActive(true);
+
+        // 용기 발견 트리거까지 대기
+        searchSectionDone = false;
+        yield return new WaitUntil(() => searchSectionDone);
+
+        Debug.Log("[Prologue] 2구간: 완료");
     }
 
     IEnumerator Section3_TransferRoute()

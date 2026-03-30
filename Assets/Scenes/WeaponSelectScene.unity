@@ -451,12 +451,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dd09f47ac03b714db487827dbeeffe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponDataList:
-  - {fileID: 11400000, guid: a565b8fc3b2d22d4ab1887cf5411432e, type: 2}
   weaponButtons:
   - {fileID: 121507986}
   weaponNameText: {fileID: 0}
   descriptionText: {fileID: 0}
+  fallbackWeapons:
+  - {fileID: 11400000, guid: a565b8fc3b2d22d4ab1887cf5411432e, type: 2}
 --- !u!1 &488088582
 GameObject:
   m_ObjectHideFlags: 0

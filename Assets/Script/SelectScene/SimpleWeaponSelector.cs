@@ -9,21 +9,30 @@ public class SimpleWeaponSelector : MonoBehaviour
     public TextMeshProUGUI weaponNameText;
     public TextMeshProUGUI descriptionText;
 
+    [Header("무기 데이터 (WeaponManager가 없을 때 사용)")]
+    public WeaponData[] fallbackWeapons;
+
     private WeaponData[] weaponList;
     private WeaponData selectedWeapon;
 
     void Start()
     {
-        // WeaponManager를 단일 소스로 사용
-        if (WeaponManager.Instance == null || WeaponManager.Instance.allWeapons == null)
+        // WeaponManager가 있으면 우선 사용, 없으면 로컬 fallback 사용
+        if (WeaponManager.Instance != null && WeaponManager.Instance.allWeapons != null && WeaponManager.Instance.allWeapons.Length > 0)
+        {
+            weaponList = WeaponManager.Instance.allWeapons;
+        }
+        else if (fallbackWeapons != null && fallbackWeapons.Length > 0)
+        {
+            weaponList = fallbackWeapons;
+        }
+        else
         {
 #if UNITY_EDITOR
-            Debug.LogError("WeaponManager 또는 allWeapons가 없습니다!");
+            Debug.LogError("WeaponManager 또는 fallbackWeapons가 없습니다!");
 #endif
             return;
         }
-
-        weaponList = WeaponManager.Instance.allWeapons;
 
         for (int i = 0; i < weaponButtons.Length; i++)
         {
@@ -69,8 +78,8 @@ public class SimpleWeaponSelector : MonoBehaviour
         PlayerPrefs.Save();
 
         if (LoadingManager.Instance != null)
-            LoadingManager.Instance.LoadScene("BaseCamp", "DefaultSpawn");
+            LoadingManager.Instance.LoadScene("Prologue", "");
         else
-            UnityEngine.SceneManagement.SceneManager.LoadScene("BaseCamp");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Prologue");
     }
 }
