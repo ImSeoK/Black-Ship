@@ -70,6 +70,7 @@ public class CutsceneManager : MonoBehaviour
 
     void StartCutscene(PlayableDirector targetDirector, string id, bool once, bool keepLetterbox, System.Action onComplete)
     {
+        ScreenFadeUI.Instance?.SetAlpha(1f);
         DisablePlayer();
         if (LetterboxUI.Instance != null) LetterboxUI.Instance.Show();
         onStoppedCallback = (d) => OnFinished(d, id, once, keepLetterbox, onComplete);
@@ -84,7 +85,6 @@ public class CutsceneManager : MonoBehaviour
 
         EnablePlayer();
         if (!keepLetterbox && LetterboxUI.Instance != null) LetterboxUI.Instance.Hide();
-        ResetCutsceneCameras(d);
         if (once) MarkPlayed(id);
         onComplete?.Invoke();
     }
@@ -141,13 +141,4 @@ public class CutsceneManager : MonoBehaviour
         originallyEnabled.Clear();
     }
 
-    void ResetCutsceneCameras(PlayableDirector d)
-    {
-        foreach (var vcam in d.GetComponentsInChildren<CinemachineCamera>())
-        {
-            var p = vcam.Priority;
-            p.Value = 0;
-            vcam.Priority = p;
-        }
-    }
 }

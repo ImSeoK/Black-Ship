@@ -21,6 +21,10 @@ public class PrologueManager : MonoBehaviour
 
     public void CompleteSearch() => searchSectionDone = true;
 
+    [Header("3구간 - 의뢰물건 발견 (컷씬)")]
+    public PlayableDirector shelterSearchDirector;
+    public CutsceneData shelterSearchData;
+
     [Header("4구간 - 병력 습격 (컷씬)")]
     public PlayableDirector ambushDirector;
     public CutsceneData ambushData;
@@ -118,9 +122,12 @@ public class PrologueManager : MonoBehaviour
         if (playerObject != null)
             playerObject.SetActive(true);
 
-        // 용기 발견 트리거까지 대기
+        // 의뢰물건 발견 트리거까지 대기
         searchSectionDone = false;
         yield return new WaitUntil(() => searchSectionDone);
+
+        // 3구간 컷씬 (의뢰물건 발견 연출)
+        yield return PlayCutscene(shelterSearchDirector, shelterSearchData);
 
         Debug.Log("[Prologue] 2구간: 완료");
     }

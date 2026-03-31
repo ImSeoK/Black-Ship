@@ -27,22 +27,13 @@ public class ScreenFadeUI : MonoBehaviour
             return;
         }
 
-        // 시작 시 완전 투명
-        SetAlpha(0f);
-
-        // EffectBehaviour 이벤트 구독
-        EffectBehaviour.OnFadeRequested += HandleFadeRequest;
+        // 시작 시 완전 검정 (타임라인 FadeIn 클립이 직접 알파를 구동함)
+        SetAlpha(1f);
     }
 
     void OnDestroy()
     {
-        EffectBehaviour.OnFadeRequested -= HandleFadeRequest;
         if (Instance == this) Instance = null;
-    }
-
-    void HandleFadeRequest(float from, float to)
-    {
-        FadeTo(from, to, defaultDuration);
     }
 
     public void FadeTo(float from, float to, float duration)
@@ -61,7 +52,7 @@ public class ScreenFadeUI : MonoBehaviour
         FadeTo(1f, 0f, duration < 0f ? defaultDuration : duration);
     }
 
-    void SetAlpha(float alpha)
+    public void SetAlpha(float alpha)
     {
         if (fadeImage == null) return;
         Color c = fadeImage.color;

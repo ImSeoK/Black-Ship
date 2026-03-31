@@ -23,16 +23,18 @@ public class CinemachineTarget : MonoBehaviour
         FindPlayer();
     }
 
+    void Update()
+    {
+        if (vcam.Follow == null)
+            FindPlayer();
+    }
+
     void FindPlayer()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
-        {
-            Debug.LogWarning("[CinemachineTarget] Player ¾øÀ½");
-            return;
-        }
+        if (player == null) return;
 
         vcam.Follow = player.transform;
-        Debug.Log("[CinemachineTarget] Player ¿¬°á ¿Ï·á");
+        Debug.Log("[CinemachineTarget] Player Follow ì„¤ì • ì™„ë£Œ");
     }
 }
