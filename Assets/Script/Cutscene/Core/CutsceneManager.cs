@@ -59,6 +59,7 @@ public class CutsceneManager : MonoBehaviour
         if (data.playOnce && !debugIgnorePlayOnce && HasPlayed(data.cutsceneID))
         {
             Debug.Log($"[CutsceneManager] {data.cutsceneID} 스킵");
+            onComplete?.Invoke();
             return;
         }
 

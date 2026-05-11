@@ -1,11 +1,13 @@
 using UnityEngine;
-using Unity.Cinemachine;
+using System.Collections;
 
 public class CameraShake : MonoBehaviour
 {
     public static CameraShake Instance;
 
-    private CinemachineImpulseSource impulseSource;
+    [Header("Signal Shake 설정")]
+    public float signalDuration = 0.5f;
+    public float signalMagnitude = 0.3f;
 
     void Awake()
     {
@@ -13,24 +15,52 @@ public class CameraShake : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
-
-        impulseSource = GetComponent<CinemachineImpulseSource>();
-
-        if (impulseSource == null)
-            Debug.LogWarning("[CameraShake] CinemachineImpulseSource 없음");
     }
 
-    public void Shake(float duration, float magnitude)
+    public void ShakeFromSignal()
     {
-        if (impulseSource == null) return;
-        impulseSource.ImpulseDefinition.ImpulseDuration = duration;
+        StartCoroutine(ShakeCoroutine(signalDuration, signalMagnitude));
+    }
 
-        // 랜덤 방향으로 흔들림
-        Vector3 randomVelocity = new Vector3(
-            Random.Range(-1f, 1f) * magnitude,
-            Random.Range(-1f, 1f) * magnitude,
-            0f
-        );
-        impulseSource.GenerateImpulse(randomVelocity);
+    public void StartContinuousShake(float magnitude)
+    {
+        StopContinuousShake();
+        continuousShakeCoroutine = StartCoroutine(ContinuousShake(magnitude));
+    }
+
+    public void StopContinuousShake()
+    {
+        if (continuousShakeCoroutine != null)
+        {
+            StopCoroutine(continuousShakeCoroutine);
+            continuousShakeCoroutine = null;
+        }
+    }
+
+    private Coroutine continuousShakeCoroutine;
+
+    IEnumerator ContinuousShake(float magnitude)
+    {
+        while (true)
+        {
+            yield return StartCoroutine(ShakeCoroutine(0.15f, magnitude));
+        }
+    }
+
+    IEnumerator ShakeCoroutine(float duration, float magnitude)
+    {
+        float elapsed = 0f;
+        Vector3 originalPos = Camera.main.transform.localPosition;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+            Camera.main.transform.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Camera.main.transform.localPosition = originalPos;
     }
 }

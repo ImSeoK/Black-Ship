@@ -66,7 +66,11 @@ public class PrologueManager : MonoBehaviour
             playerObject.SetActive(false);
 
         if (skipToSection)
+        {
+            if (CutsceneManager.Instance != null)
+                CutsceneManager.Instance.debugIgnorePlayOnce = true;
             StartCoroutine(RunFromSection(skipTargetSection));
+        }
         else
             StartCoroutine(RunPrologue());
     }
@@ -152,11 +156,19 @@ public class PrologueManager : MonoBehaviour
         Debug.Log("[Prologue] 3구간: 완료");
     }
 
+    private bool ambushInteractionDone = false;
+    public void CompleteAmbushInteraction() => ambushInteractionDone = true;
+
     IEnumerator Section4_MilitaryAmbush()
     {
         Debug.Log("[Prologue] 4구간: 병력 습격");
-        // CutsceneManager가 플레이어 컴포넌트를 자동으로 비활성화/복원
         yield return PlayCutscene(ambushDirector, ambushData);
+
+        if (!skipToSection)
+        {
+            ambushInteractionDone = false;
+            yield return new WaitUntil(() => ambushInteractionDone);
+        }
     }
 
     IEnumerator Section5_AbilityReveal()

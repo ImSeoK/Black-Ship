@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speaker: "\uC758\uB8B0\uC778"
   speakerType: 0
-  dialogueText: "\uB2F9\uC2E0\uC758 \uC2E4\uB825\uC740 \uC774\uBBF8 \uAC80\uC99D\uB418\uC5C8\uC2B5\uB2C8\uB2E4."
+  dialogueText: "\uB2F9\uC2E0\uC758 \uC2E4\uB825\uC740 \uC774\uBBF8 \uAC80\uC99D\uB418\uC5C8\uC2B5\uB2C8\uB2E4. "
   typingSpeed: 0.05
 --- !u!114 &-7369733107091046486
 MonoBehaviour:
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speaker: "\uC758\uB8B0\uC778"
   speakerType: 0
-  dialogueText: "\uB2E8\uC21C\uD55C \uC758\uB8B0\uC5D0\uC694. \uC783\uC5B4\uBC84\uB9B0
+  dialogueText: "\uB2E8\uC21C\uD55C \uC758\uB8C1\uB2C8\uB2E4. \uC783\uC5B4\uBC84\uB9B0
     \uBB3C\uAC74\uC744...."
   typingSpeed: 0.05
 --- !u!114 &2624867005697691914
@@ -147,8 +147,6 @@ MonoBehaviour:
   m_Name: EffectClip
   m_EditorClassIdentifier: 
   effectType: 2
-  shakeDuration: 0.5
-  shakeMagnitude: 0.5
   soundClip: {fileID: 0}
 --- !u!114 &2732713507796126332
 MonoBehaviour:
@@ -915,8 +913,6 @@ MonoBehaviour:
   m_Name: EffectClip
   m_EditorClassIdentifier: 
   effectType: 3
-  shakeDuration: 0.5
-  shakeMagnitude: 0.5
   soundClip: {fileID: 0}
 --- !u!114 &4449040614375102039
 MonoBehaviour:
@@ -1151,7 +1147,7 @@ MonoBehaviour:
     m_Objects: []
   m_InfiniteClipPreExtrapolation: 1
   m_InfiniteClipPostExtrapolation: 1
-  m_InfiniteClipOffsetPosition: {x: 0.23, y: 1.4, z: 0}
+  m_InfiniteClipOffsetPosition: {x: -1.67, y: 3.47, z: 0}
   m_InfiniteClipOffsetEulerAngles: {x: -0, y: 0, z: 0}
   m_InfiniteClipTimeOffset: 0
   m_InfiniteClipRemoveOffset: 0
@@ -1181,7 +1177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speaker: "\uC8FC\uC778\uACF5"
   speakerType: 1
-  dialogueText: "\uBCF4\uC218\uB294"
+  dialogueText: "\uB2E8\uC21C\uC774\uB77C.. \uBCF4\uC218\uB294"
   typingSpeed: 0.05
 --- !u!114 &7701640254175492401
 MonoBehaviour:
@@ -1337,7 +1333,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 1
-        value: {x: 0, y: 3.1, z: 0}
+        value: {x: 0, y: 0, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -1345,8 +1341,8 @@ AnimationClip:
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
-        time: 1.5
-        value: {x: 0, y: 0.6, z: 0}
+        time: 1.3
+        value: {x: 0, y: -1.47, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -1382,7 +1378,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1.5
+    m_StopTime: 1.3
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -1412,7 +1408,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1.5
+        time: 1.3
         value: 0
         inSlope: 0
         outSlope: 0
@@ -1434,7 +1430,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 1
-        value: 3.1
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -1442,8 +1438,8 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1.5
-        value: 0.6
+        time: 1.3
+        value: -1.47
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -1472,7 +1468,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1.5
+        time: 1.3
         value: 0
         inSlope: 0
         outSlope: 0

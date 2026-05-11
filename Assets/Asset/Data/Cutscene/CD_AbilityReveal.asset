@@ -15,3 +15,4 @@ MonoBehaviour:
   cutsceneID: AbilityReveal
   timelineAsset: {fileID: 11400000, guid: b406bbb94e23982458c70d53ca7d6b81, type: 2}
   playOnce: 1
+  keepLetterboxOnEnd: 1
