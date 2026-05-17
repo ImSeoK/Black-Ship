@@ -13,6 +13,7 @@ public class ScreenFadeUI : MonoBehaviour
     public float defaultDuration = 0.5f;
 
     private Coroutine currentFade;
+    public bool IsFading => currentFade != null;
 
     void Awake()
     {
@@ -36,6 +37,11 @@ public class ScreenFadeUI : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    public void StopFade()
+    {
+        if (currentFade != null) { StopCoroutine(currentFade); currentFade = null; }
+    }
+
     public void FadeTo(float from, float to, float duration)
     {
         if (currentFade != null) StopCoroutine(currentFade);
@@ -57,6 +63,16 @@ public class ScreenFadeUI : MonoBehaviour
         if (fadeImage == null) return;
         Color c = fadeImage.color;
         c.a = alpha;
+        fadeImage.color = c;
+    }
+
+    public void SetFadeColor(Color color)
+    {
+        if (fadeImage == null) return;
+        Color c = fadeImage.color;
+        c.r = color.r;
+        c.g = color.g;
+        c.b = color.b;
         fadeImage.color = c;
     }
 

@@ -71,6 +71,8 @@ public class CutsceneManager : MonoBehaviour
 
     void StartCutscene(PlayableDirector targetDirector, string id, bool once, bool keepLetterbox, System.Action onComplete)
     {
+        // 진행 중인 페이드 코루틴을 먼저 종료해야 타임라인 EffectClip과 충돌 안 함
+        ScreenFadeUI.Instance?.StopFade();
         ScreenFadeUI.Instance?.SetAlpha(1f);
         DisablePlayer();
         if (LetterboxUI.Instance != null) LetterboxUI.Instance.Show();

@@ -5,7 +5,7 @@ using UnityEngine.Timeline;
 [System.Serializable]
 public class EffectClip : PlayableAsset, ITimelineClipAsset
 {
-    public enum EffectType { PlaySound, FadeOut, FadeIn }
+    public enum EffectType { PlaySound, FadeOut, FadeIn, FadeInWhite, FadeOutWhite }
 
     [Header("¿Ã∆Â∆Æ º≥¡§")]
     public EffectType effectType = EffectType.FadeIn;

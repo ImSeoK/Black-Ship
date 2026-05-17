@@ -65,12 +65,12 @@ public class PrologueManager : MonoBehaviour
         if (playerObject != null)
             playerObject.SetActive(false);
 
+        // 프롤로그는 항상 전체 재생 (PlayerPrefs 스킵 기록 무시)
+        if (CutsceneManager.Instance != null)
+            CutsceneManager.Instance.debugIgnorePlayOnce = true;
+
         if (skipToSection)
-        {
-            if (CutsceneManager.Instance != null)
-                CutsceneManager.Instance.debugIgnorePlayOnce = true;
             StartCoroutine(RunFromSection(skipTargetSection));
-        }
         else
             StartCoroutine(RunPrologue());
     }
@@ -130,6 +130,13 @@ public class PrologueManager : MonoBehaviour
         searchSectionDone = false;
         yield return new WaitUntil(() => searchSectionDone);
 
+        // 수동 조작 구간 종료 → 페이드 아웃 후 다음 컷씬 전환
+        if (ScreenFadeUI.Instance != null)
+        {
+            ScreenFadeUI.Instance.FadeOut();
+            yield return new WaitForSecondsRealtime(ScreenFadeUI.Instance.defaultDuration);
+        }
+
         // 3구간 컷씬 (의뢰물건 발견 연출)
         yield return PlayCutscene(shelterSearchDirector, shelterSearchData);
 
@@ -151,6 +158,13 @@ public class PrologueManager : MonoBehaviour
         transferSectionDone = false;
         yield return new WaitUntil(() => transferSectionDone);
 
+        // 컷씬 전환 전 페이드 아웃 완료 대기
+        if (ScreenFadeUI.Instance != null)
+        {
+            ScreenFadeUI.Instance.FadeOut();
+            yield return new WaitUntil(() => !ScreenFadeUI.Instance.IsFading);
+        }
+
         RadioTutorialUI.Instance?.HideAll();
 
         Debug.Log("[Prologue] 3구간: 완료");
@@ -164,11 +178,11 @@ public class PrologueManager : MonoBehaviour
         Debug.Log("[Prologue] 4구간: 병력 습격");
         yield return PlayCutscene(ambushDirector, ambushData);
 
-        if (!skipToSection)
-        {
-            ambushInteractionDone = false;
-            yield return new WaitUntil(() => ambushInteractionDone);
-        }
+        // 엄폐물 인터랙션 대기 (PrologueInteractable → onInteract → CompleteAmbushInteraction)
+        ambushInteractionDone = false;
+        Debug.Log("[Prologue] 4구간: 엄폐물 인터랙션 대기 중...");
+        yield return new WaitUntil(() => ambushInteractionDone);
+        Debug.Log("[Prologue] 4구간: 엄폐물 인터랙션 완료");
     }
 
     IEnumerator Section5_AbilityReveal()

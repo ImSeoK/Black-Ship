@@ -7,6 +7,7 @@ public enum PrologueTriggerActionType
     HideTutorialHint,   // 튜토리얼 힌트 숨김
     CompleteTransfer,   // 이송 구간 완료 신호 → 다음 컷씬으로 진행
     PlayBGM,            // BGM 변경
+    FadeOut,
 }
 
 [System.Serializable]
@@ -85,6 +86,10 @@ public class PrologueTriggerZone : MonoBehaviour
                 case PrologueTriggerActionType.PlayBGM:
                     if (action.bgmClip != null)
                         AudioManager.Instance?.PlayBGM(action.bgmClip, true);
+                    break;
+
+                case PrologueTriggerActionType.FadeOut:
+                    ScreenFadeUI.Instance?.FadeOut();
                     break;
             }
         }

@@ -34,15 +34,31 @@ public class EffectBehaviour : PlayableBehaviour
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
         if (!Application.isPlaying) return;
-        if (effectType != EffectClip.EffectType.FadeIn && effectType != EffectClip.EffectType.FadeOut) return;
 
         float currentTime = (float)playable.GetTime();
         float duration = (float)playable.GetDuration();
 
-        float alpha = effectType == EffectClip.EffectType.FadeIn
-            ? 1f - (currentTime / duration)
-            : currentTime / duration;
+        switch (effectType)
+        {
+            case EffectClip.EffectType.FadeIn:
+                ScreenFadeUI.Instance?.SetFadeColor(Color.black);
+                ScreenFadeUI.Instance?.SetAlpha(1f - (currentTime / duration));
+                break;
 
-        ScreenFadeUI.Instance?.SetAlpha(alpha);
+            case EffectClip.EffectType.FadeOut:
+                ScreenFadeUI.Instance?.SetFadeColor(Color.black);
+                ScreenFadeUI.Instance?.SetAlpha(currentTime / duration);
+                break;
+
+            case EffectClip.EffectType.FadeInWhite:
+                ScreenFadeUI.Instance?.SetFadeColor(Color.white);
+                ScreenFadeUI.Instance?.SetAlpha(1f - (currentTime / duration));
+                break;
+
+            case EffectClip.EffectType.FadeOutWhite:
+                ScreenFadeUI.Instance?.SetFadeColor(Color.white);
+                ScreenFadeUI.Instance?.SetAlpha(currentTime / duration);
+                break;
+        }
     }
 }
